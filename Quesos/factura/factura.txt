@@ -1,0 +1,7 @@
+ID: F-1
+Fecha: 28/07/2021 05:32:55
+Cliente: Emil Penalo
+Quesos: 
+	ID Queso    Volumen      Precio Unitario
+	 Q-1         4.1888        1.0000    
+Total: RD$5.1887903

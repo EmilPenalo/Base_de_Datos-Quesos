@@ -1,5 +1,8 @@
 package logico;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -153,6 +156,16 @@ public class Empresa implements Serializable{
 	public void crearFactura(Cliente c, ArrayList<Queso> compra) {
 		Factura f = new Factura("F-" + Factura.codigo, c, compra);
 		insertarFactura(f);
+		
+		try {
+			
+	      FileWriter escritor = new FileWriter("factura/factura.txt");
+	      escritor.write(f.toText());
+	      escritor.close();
+	      
+	    } catch (IOException e) {
+	      e.printStackTrace();
+	    }
 	}
 	
 	public ArrayList<Factura> getFacturasOfCliente(String cedula) {

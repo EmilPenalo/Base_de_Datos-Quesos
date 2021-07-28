@@ -276,25 +276,35 @@ public class HacerPedido extends JDialog {
 				JButton okButton = new JButton("Finalizar");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						if (selected == null) {
-							selected = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtDireccion.getText(), txtTelefono.getText());
-							Empresa.getInstance().insertarCliente(selected);
+						if (listModelCompra.size() != 0) {
+							if (!txtCedula.getText().equals("")) {
+								
+								if (selected == null) {
+									selected = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtDireccion.getText(), txtTelefono.getText());
+									Empresa.getInstance().insertarCliente(selected);
+								}
+								ArrayList<Queso> compra = new ArrayList<>();
+								for (int i = 0; i < listModelCompra.size(); i++) {
+									String aux = listModelCompra.getElementAt(i);
+									Queso temp = Empresa.getInstance().findQuesoById(aux.substring(0, aux.indexOf('|')));
+									compra.add(temp);
+									Empresa.getInstance().eliminarQueso(temp);
+									
+								}
+								Empresa.getInstance().crearFactura(selected, compra);
+								
+								JOptionPane.showMessageDialog(null, "Operacion Satisfactoria", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+								txtCedula.setText("");
+								selected = null;
+								clean();
+								updateMonto();
+								
+							} else {
+								JOptionPane.showMessageDialog(null, "Debe ingresar un cliente", "Informacion", JOptionPane.WARNING_MESSAGE);
+							}
+						} else {
+							JOptionPane.showMessageDialog(null, "Debe seleccionar por un queso", "Informacion", JOptionPane.WARNING_MESSAGE);
 						}
-						ArrayList<Queso> compra = new ArrayList<>();
-						for (int i = 0; i < listModelCompra.size(); i++) {
-							String aux = listModelCompra.getElementAt(i);
-							Queso temp = Empresa.getInstance().findQuesoById(aux.substring(0, aux.indexOf('|')));
-							compra.add(temp);
-							Empresa.getInstance().eliminarQueso(temp);
-							
-						}
-						Empresa.getInstance().crearFactura(selected, compra);
-						
-						JOptionPane.showMessageDialog(null, "Operacion Satisfactoria", "Informacion", JOptionPane.INFORMATION_MESSAGE);
-						txtCedula.setText("");
-						selected = null;
-						clean();
-						updateMonto();
 					}
 				});
 				okButton.setActionCommand("OK");
