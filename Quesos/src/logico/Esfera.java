@@ -1,6 +1,8 @@
 package logico;
 
 public class Esfera extends Queso {
+
+	private static final long serialVersionUID = 1L;
 	private int radio;
 	
 	public Esfera(String id, float precioBase, float precioUnitario, int radio) {

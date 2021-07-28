@@ -1,6 +1,8 @@
 package logico;
 
 public class CilindroHueco extends Cilindro {
+
+	private static final long serialVersionUID = 1L;
 	private int radioInterno;
 
 	public CilindroHueco(String id, float precioBase, float precioUnitario, int radio, int longitud, int radioInterno) {

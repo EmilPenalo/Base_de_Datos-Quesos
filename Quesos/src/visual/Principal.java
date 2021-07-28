@@ -9,13 +9,23 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import logico.Empresa;
+
 import javax.swing.border.BevelBorder;
 import java.awt.FlowLayout;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class Principal extends JFrame {
 
@@ -28,6 +38,47 @@ public class Principal extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+
+				FileInputStream empresaInput;
+				FileOutputStream empresaOutput;
+				ObjectInputStream empresaReader;
+				ObjectOutputStream empresaWriter;
+					
+				try {
+					
+					empresaInput = new FileInputStream ("empresa.dat");
+					empresaReader = new ObjectInputStream(empresaInput);
+					Empresa temp = (Empresa) empresaReader.readObject();
+					Empresa.setTienda(temp);
+					
+					empresaInput.close();
+					empresaReader.close();
+					
+				} catch (FileNotFoundException e) {
+					
+					try {
+						
+						empresaOutput = new  FileOutputStream("empresa.dat");
+						empresaWriter = new ObjectOutputStream(empresaOutput);
+
+						empresaWriter.writeObject(Empresa.getInstance());
+						
+						empresaOutput.close();
+						empresaWriter.close();
+						
+					} catch (FileNotFoundException e1) {
+						e.printStackTrace();
+					} catch (IOException e1) {
+						e.printStackTrace();
+					}
+					
+					
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
 				try {
 					Principal frame = new Principal();
 					frame.setVisible(true);
@@ -42,6 +93,23 @@ public class Principal extends JFrame {
 	 * Create the frame.
 	 */
 	public Principal() {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				FileOutputStream empresaOutput;
+				ObjectOutputStream empresaWrite;
+				try {
+					empresaOutput = new  FileOutputStream("empresa.dat");
+					empresaWrite = new ObjectOutputStream(empresaOutput);
+					empresaWrite.writeObject(Empresa.getInstance());
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+		
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		setTitle("Registro de Quesos");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

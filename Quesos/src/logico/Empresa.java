@@ -1,8 +1,12 @@
 package logico;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Empresa {
+public class Empresa implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+	
 	private ArrayList<Cliente> clientes;
 	private ArrayList<Factura> facturas;
 	private ArrayList<Queso> quesos;
@@ -159,5 +163,9 @@ public class Empresa {
 			}
 		}
 		return deCliente;
+	}
+
+	public static void setTienda(Empresa temp) {
+		Empresa.empresa = temp;
 	}
 }

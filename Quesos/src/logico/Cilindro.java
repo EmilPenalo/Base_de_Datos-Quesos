@@ -1,6 +1,8 @@
 package logico;
 
 public class Cilindro extends Queso {
+
+	private static final long serialVersionUID = 1L;
 	protected int radio;
 	protected int longitud;
 	
