@@ -1,0 +1,22 @@
+package logico;
+
+public class CilindroHueco extends Cilindro {
+	private int radioInterno;
+
+	public CilindroHueco(String id, float precioBase, float precioUnitario, int radio, int longitud, int radioInterno) {
+		super(id, precioBase, precioUnitario, radio, longitud);
+		this.radioInterno = radioInterno;
+	}
+
+	public int getRadioInterno() {
+		return radioInterno;
+	}
+
+	public void setRadioInterno(int radioInterno) {
+		this.radioInterno = radioInterno;
+	}
+	
+	public float areaBase() {
+		return (float) (Math.PI* (Math.pow(radio, 2) - Math.pow(radioInterno, 2)));
+	}
+}
