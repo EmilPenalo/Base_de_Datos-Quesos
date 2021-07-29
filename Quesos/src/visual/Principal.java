@@ -102,6 +102,10 @@ public class Principal extends JFrame {
 					empresaOutput = new  FileOutputStream("empresa.dat");
 					empresaWrite = new ObjectOutputStream(empresaOutput);
 					empresaWrite.writeObject(Empresa.getInstance());
+					
+					empresaOutput.close();
+					empresaWrite.close();
+
 				} catch (FileNotFoundException e1) {
 					e1.printStackTrace();
 		
