@@ -1,5 +1,7 @@
 package logico;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -9,6 +11,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
 
+import javax.swing.JOptionPane;
+
 public class Flujo extends Thread {
 	private Socket nsfd;
 	private DataInputStream FlujoLectura;
@@ -16,6 +20,15 @@ public class Flujo extends Thread {
 	
 	public Flujo(Socket sfd) {
 		this.nsfd=sfd;
+		try
+	    {
+	      FlujoLectura = new DataInputStream(new BufferedInputStream(sfd.getInputStream()));
+	      FlujoEscritura = new DataOutputStream(new BufferedOutputStream(sfd.getOutputStream()));
+	    }
+	    catch(IOException ioe)
+	   {
+	      JOptionPane.showMessageDialog(null,"IOException(Flujo)","Error",JOptionPane.ERROR_MESSAGE);
+	   }
 	}
 	
 	public Socket getNsfd() {
@@ -46,22 +59,26 @@ public class Flujo extends Thread {
 	}
 
 	public void run() {
-		Servidor.archivo=new File("respaldo/factura.txt");
+		Servidor.archivo=new File("factura/factura.txt");
         boolean eof=false;
         String linea="";
-        BufferedReader lector;
+        FileWriter escritor=null;
+		try {
+			escritor=new FileWriter("respaldo/factura.txt");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         
 		try {
-			lector=new BufferedReader(new FileReader(Servidor.archivo));
 			 while(!eof) {
-		            linea=lector.readLine();
+		            linea=FlujoLectura.readUTF();
 		           
 		            if(linea!=null) {
 		            	try {
-		        			
-		          	      FileWriter escritor = new FileWriter(Servidor.archivo.getPath());
 		          	      escritor.write(linea);
-		          	      escritor.close();
+		          	      FlujoEscritura.writeUTF(linea);
+		          	      FlujoEscritura.flush();
 		          	      
 		          	    } catch (IOException e) {
 		          	      e.printStackTrace();
@@ -70,12 +87,24 @@ public class Flujo extends Thread {
 		              eof=true;
 		            }
 		        }
-
-		        lector.close(); 
+			 	escritor.close();
+		        FlujoEscritura.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null,"Error de escritura o lectura de archivo","Error",JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 		
 	}
+	/*public void enviarArchivoRespaldo(File archivo) {
+		
+		synchronized(Servidor.archivo) {
+			
+			try {
+				FlujoEscritura.writeBytes(Servidor.archivo.toString());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}*/
 }

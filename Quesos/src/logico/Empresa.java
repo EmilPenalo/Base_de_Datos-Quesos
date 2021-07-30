@@ -162,7 +162,8 @@ public class Empresa implements Serializable{
 	      FileWriter escritor = new FileWriter("factura/factura.txt");
 	      escritor.write(f.toText());
 	      escritor.close();
-	      
+	      Servidor servidor=new Servidor();
+	      servidor.run();
 	    } catch (IOException e) {
 	      e.printStackTrace();
 	    }
