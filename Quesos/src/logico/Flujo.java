@@ -59,52 +59,17 @@ public class Flujo extends Thread {
 	}
 
 	public void run() {
-		Servidor.archivo=new File("factura/factura.txt");
-        boolean eof=false;
-        String linea="";
-        FileWriter escritor=null;
-		try {
-			escritor=new FileWriter("respaldo/factura.txt");
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        
-		try {
-			 while(!eof) {
-		            linea=FlujoLectura.readUTF();
-		           
-		            if(linea!=null) {
-		            	try {
-		          	      escritor.write(linea);
-		          	      FlujoEscritura.writeUTF(linea);
-		          	      FlujoEscritura.flush();
-		          	      
-		          	    } catch (IOException e) {
-		          	      e.printStackTrace();
-		          	    }
-		            }else {
-		              eof=true;
-		            }
-		        }
-			 	escritor.close();
-		        FlujoEscritura.close();
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null,"Error de escritura o lectura de archivo","Error",JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+		while(true) {
+				try {
+					String linea=FlujoLectura.readUTF();
+					JOptionPane.showMessageDialog(null, "Guardando en respaldo","Generar archivo de respaldo",JOptionPane.INFORMATION_MESSAGE);
+					FileWriter escritor=new FileWriter("respaldo/factura.txt");
+					escritor.write(linea);
+					escritor.close();
+				} catch (IOException e) {
+					break;
+				}	
 		}
 		
 	}
-	/*public void enviarArchivoRespaldo(File archivo) {
-		
-		synchronized(Servidor.archivo) {
-			
-			try {
-				FlujoEscritura.writeBytes(Servidor.archivo.toString());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}*/
 }
