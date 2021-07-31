@@ -26,21 +26,25 @@ import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-import java.awt.Point;
-import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Date;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JSpinner;
-import javax.swing.SpinnerDateModel;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import javax.swing.SpinnerNumberModel;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class HacerPedido extends JDialog {
 
@@ -51,9 +55,9 @@ public class HacerPedido extends JDialog {
 	private Cliente selected = null;
 	private JButton btnDerecha;
 	private JButton btnIzquierda;
-	private JList listDisponible;
+	private JList<String> listDisponible;
 	private DefaultListModel<String> listModelDisp;
-	private JList listCompra;
+	private JList<String> listCompra;
 	private DefaultListModel<String> listModelCompra;
 	private JTextField txtCodigo;
 	private JTextField txtTelefono;
@@ -185,7 +189,7 @@ public class HacerPedido extends JDialog {
 			scrollPane.setBounds(15, 301, 163, 180);
 			panel.add(scrollPane);
 			
-			listDisponible = new JList();
+			listDisponible = new JList<String>();
 			listDisponible.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			listDisponible.addMouseListener(new MouseAdapter() {
 				@Override
@@ -208,7 +212,7 @@ public class HacerPedido extends JDialog {
 			scrollPane_1.setBounds(270, 301, 163, 180);
 			panel.add(scrollPane_1);
 			
-			listCompra = new JList();
+			listCompra = new JList<String>();
 			listCompra.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			listCompra.addMouseListener(new MouseAdapter() {
 				@Override
@@ -304,7 +308,7 @@ public class HacerPedido extends JDialog {
 							}
 						} else {
 							JOptionPane.showMessageDialog(null, "Debe seleccionar por un queso", "Informacion", JOptionPane.WARNING_MESSAGE);
-						}
+						}	
 					}
 				});
 				okButton.setActionCommand("OK");

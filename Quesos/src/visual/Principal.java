@@ -10,19 +10,30 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import logico.Empresa;
+import logico.Servidor;
 
 import javax.swing.border.BevelBorder;
 import java.awt.FlowLayout;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Scanner;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -31,11 +42,23 @@ public class Principal extends JFrame {
 
 	private JPanel contentPane;
 	private Dimension dim;
+	
+	private static Socket sfd = null;
+	private static DataInputStream EntradaSocket;
+	private static DataOutputStream SalidaSocket;
+
+	public static DataInputStream getEntradaSocket() {
+		return EntradaSocket;
+	}
+
+	public static DataOutputStream getSalidaSocket() {
+		return SalidaSocket;
+	}
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) {	    
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 
@@ -85,6 +108,25 @@ public class Principal extends JFrame {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				
+
+				try
+			    {
+			      sfd = new Socket("127.0.0.1",8000);
+			      EntradaSocket = new DataInputStream(new BufferedInputStream(sfd.getInputStream()));
+			      SalidaSocket = new DataOutputStream(new BufferedOutputStream(sfd.getOutputStream()));
+			    }
+			    catch (UnknownHostException uhe)
+			    {
+				  JOptionPane.showMessageDialog(null, "No se puede acceder al servidor.", "Error", JOptionPane.ERROR_MESSAGE);
+			      System.exit(1);
+			    }
+			    catch (IOException ioe)
+			    {
+				  JOptionPane.showMessageDialog(null, "Comunicación rechazada.", "Error", JOptionPane.ERROR_MESSAGE);
+
+			      System.exit(1);
+			    } 
 			}
 		});
 	}
@@ -98,6 +140,15 @@ public class Principal extends JFrame {
 			public void windowClosing(WindowEvent e) {
 				FileOutputStream empresaOutput;
 				ObjectOutputStream empresaWrite;
+				
+				if (sfd != null) {
+					try {
+					  sfd.close();
+					} catch (IOException ioe) {
+					  System.out.println("Error: "+ioe);
+					}
+				}
+				
 				try {
 					empresaOutput = new  FileOutputStream("empresa.dat");
 					empresaWrite = new ObjectOutputStream(empresaOutput);

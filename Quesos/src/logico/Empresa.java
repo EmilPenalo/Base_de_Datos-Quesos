@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import visual.Principal;
+
 public class Empresa implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -158,12 +160,14 @@ public class Empresa implements Serializable{
 		insertarFactura(f);
 		
 		try {
+			String texto = f.toText();
+			FileWriter escritor = new FileWriter("factura/factura.txt");
+			escritor.write(texto);
+			escritor.close();
 			
-	      FileWriter escritor = new FileWriter("factura/factura.txt");
-	      escritor.write(f.toText());
-	      escritor.close();
-	      Servidor servidor=new Servidor();
-	      servidor.run();
+			Principal.getSalidaSocket().writeUTF(texto);
+			Principal.getSalidaSocket().flush();
+	      
 	    } catch (IOException e) {
 	      e.printStackTrace();
 	    }
