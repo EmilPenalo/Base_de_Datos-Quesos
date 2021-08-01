@@ -1,7 +1,0 @@
-ID: F-1
-Fecha: 30/07/2021 01:29:23
-Cliente: hdfjkfk
-Quesos: 
-	ID Queso    Volumen      Precio Unitario
-	 Q-1         4.1888        20.0000   
-Total: RD$86.7758
