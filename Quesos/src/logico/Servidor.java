@@ -15,7 +15,7 @@ public class Servidor extends Thread {
 		try {
 		sfd=new ServerSocket(8000);
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "La Comunicación ha sido rechazada"+e,"conecxión al servidor", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "La Comunicaciï¿½n ha sido rechazada"+e,"conecxiï¿½n al servidor", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -25,7 +25,7 @@ public class Servidor extends Thread {
 	      try
 	      {
 	        Socket nsfd=sfd.accept();
-	        JOptionPane.showMessageDialog(null,"Conexion aceptada de: "+nsfd.getInetAddress(),"Conecxión aceptada",JOptionPane.INFORMATION_MESSAGE);
+	        JOptionPane.showMessageDialog(null,"Conexion aceptada de: "+nsfd.getInetAddress(),"Conecxiï¿½n aceptada",JOptionPane.INFORMATION_MESSAGE);
 		    Flujo flujo=new Flujo(nsfd);
 		    Thread t =new Thread(flujo);
 	        t.start();
@@ -39,3 +39,5 @@ public class Servidor extends Thread {
 
 }
 }
+
+//
