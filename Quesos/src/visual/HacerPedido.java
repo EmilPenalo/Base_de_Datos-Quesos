@@ -64,7 +64,7 @@ public class HacerPedido extends JDialog {
 	private JSpinner spnMonto;
 
 	/**
-	 * Launch the application.
+	  Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
