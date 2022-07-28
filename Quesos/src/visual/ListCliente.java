@@ -36,7 +36,7 @@ public class ListCliente extends JDialog {
 	private JButton btnSelect;
 
 	/**
-	 * Launch the application.
+	 * Launch the applicatio
 	 */
 	public static void main(String[] args) {
 		try {
