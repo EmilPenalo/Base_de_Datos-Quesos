@@ -8,27 +8,37 @@ public class Cliente implements Serializable{
 	private String id;
 	private String cedula;
 	private String nombre;
-	private String direccion;
+	private String cuidad;
+	private String pais;
 	private String telefono;
 	public static int codigo = 1;
 	
 	
-	public Cliente(String id, String cedula, String nombre, String direccion, String telefono) {
+	public Cliente(String id, String cedula, String nombre, String telefono, String cuidad, String pais) {
 		super();
 		this.id = id;
 		this.cedula = cedula;
 		this.nombre = nombre;
-		this.direccion = direccion;
+		this.cuidad = cuidad;
+		this.pais = pais;
 		this.telefono = telefono;
 		Cliente.codigo++;
+	}
+	
+	public String getPais() {
+		return pais;
+	}
+	
+	public void setPais(String pais) {
+		this.pais = pais;
 	}
 
 	public String getCedula() {
 		return cedula;
 	}
 
-	public void setCedula(String id) {
-		this.cedula = id;
+	public void setCedula(String cedula) {
+		this.cedula = cedula;
 	}
 
 	public String getNombre() {
@@ -39,12 +49,12 @@ public class Cliente implements Serializable{
 		this.nombre = nombre;
 	}
 
-	public String getDireccion() {
-		return direccion;
+	public String getCuidad() {
+		return cuidad;
 	}
 
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
+	public void setCuidad(String cuidad) {
+		this.cuidad = cuidad;
 	}
 
 	public String getTelefono() {
