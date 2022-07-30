@@ -4,7 +4,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
 
 import visual.Principal;
 
@@ -16,6 +21,7 @@ public class Empresa implements Serializable{
 	private ArrayList<Factura> facturas;
 	private ArrayList<Queso> quesos;
 	private static Empresa empresa = null;
+	public static Connection database = null;
 	
 	public Empresa() {
 		super();
@@ -185,5 +191,23 @@ public class Empresa implements Serializable{
 
 	public static void setTienda(Empresa temp) {
 		Empresa.empresa = temp;
+	}
+	
+	public static Connection getSqlConnection() {
+		String url = "jdbc:sqlserver://192.168.100.118:1433;" 
+	+ "database=proyecto_final_grupo3;"
+	+ "user=sa;"
+	+ "password=Eict@2021;"
+	+  "loginTimeout=30;"
+	+ "encrypt=true;"
+	+ "trustServerCertificate=true;";
+		
+		try {
+			Connection con = DriverManager.getConnection(url);
+			return con;
+		}catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.toString(), "Error de conexión", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
 	}
 }
