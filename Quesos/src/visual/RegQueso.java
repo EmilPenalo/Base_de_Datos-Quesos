@@ -44,6 +44,8 @@ public class RegQueso extends JDialog {
 	private JSpinner spnRadioInterno;
 	private JSpinner spnLongitudCilindro;
 	private JSpinner spnRadioCilindro;
+	private JLabel lblNombre;
+	private JTextField txtNombre;
 
 	/**
 	 * Launch the application.
@@ -86,7 +88,7 @@ public class RegQueso extends JDialog {
 			
 			JPanel panelGeneral = new JPanel();
 			panelGeneral.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Informacion general", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-			panelGeneral.setBounds(15, 16, 388, 146);
+			panelGeneral.setBounds(15, 16, 401, 146);
 			panel.add(panelGeneral);
 			panelGeneral.setLayout(null);
 			
@@ -97,7 +99,7 @@ public class RegQueso extends JDialog {
 			txtCodigo = new JTextField();
 			txtCodigo.setEditable(false);
 			txtCodigo.setColumns(10);
-			txtCodigo.setBounds(105, 28, 146, 30);
+			txtCodigo.setBounds(69, 28, 110, 30);
 			if (selected == null) {
 				txtCodigo.setText("Q-" + Queso.codigo);
 			} else {
@@ -112,7 +114,7 @@ public class RegQueso extends JDialog {
 			
 			spnPrecioBase = new JSpinner();
 			spnPrecioBase.setModel(new SpinnerNumberModel(new Float(0), new Float(0), null, new Float(1)));
-			spnPrecioBase.setBounds(105, 64, 146, 30);
+			spnPrecioBase.setBounds(112, 64, 110, 30);
 			panelGeneral.add(spnPrecioBase);
 			
 			JLabel lblUnitario = new JLabel("Precio unitario:");
@@ -121,12 +123,21 @@ public class RegQueso extends JDialog {
 			
 			spnUnitario = new JSpinner();
 			spnUnitario.setModel(new SpinnerNumberModel(new Float(0), new Float(0), null, new Float(1)));
-			spnUnitario.setBounds(105, 100, 146, 30);
+			spnUnitario.setBounds(112, 100, 110, 30);
 			panelGeneral.add(spnUnitario);
+			
+			lblNombre = new JLabel("Nombre:");
+			lblNombre.setBounds(189, 33, 69, 20);
+			panelGeneral.add(lblNombre);
+			
+			txtNombre = new JTextField();
+			txtNombre.setColumns(10);
+			txtNombre.setBounds(249, 28, 142, 30);
+			panelGeneral.add(txtNombre);
 			
 			JPanel panelBtns = new JPanel();
 			panelBtns.setBorder(new TitledBorder(null, "Tipo de Queso", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			panelBtns.setBounds(15, 178, 388, 60);
+			panelBtns.setBounds(15, 178, 401, 60);
 			panel.add(panelBtns);
 			panelBtns.setLayout(null);
 			
@@ -269,19 +280,20 @@ public class RegQueso extends JDialog {
 							
 							Queso aux = null;
 							String id = txtCodigo.getText();
+							String nombre = txtNombre.getText();
 							float precioBase = new Float(spnPrecioBase.getValue().toString());
 							float precioUnitario = new Float(spnUnitario.getValue().toString());
 							
 							if (rdbtnEsfera.isSelected()) {
 								int radio = new Integer(spnRadioEsfera.getValue().toString());
-								aux = new Esfera(id, precioBase, precioUnitario, radio);
+								aux = new Esfera(id, nombre, precioBase, precioUnitario, radio);
 								valido = true;
 							}
 							
 							if (rdbtnCilindro.isSelected()) {
 								int radio = new Integer(spnRadioCilindro.getValue().toString());
 								int longitud = new Integer(spnLongitudCilindro.getValue().toString());
-								aux = new Cilindro(id, precioBase, precioUnitario, radio, longitud);
+								aux = new Cilindro(id, nombre, precioBase, precioUnitario, radio, longitud);
 								valido = true;
 							}
 							
@@ -291,7 +303,7 @@ public class RegQueso extends JDialog {
 								int radioInterno = new Integer(spnRadioInterno.getValue().toString());
 								
 								if (radioInterno < radio) {
-									aux = new CilindroHueco(id, precioBase, precioUnitario, radio, longitud, radioInterno);
+									aux = new CilindroHueco(id, nombre, precioBase, precioUnitario, radio, longitud, radioInterno);
 									valido = true;
 								} else {
 									JOptionPane.showMessageDialog(null, "El radio externo debe ser mayor que el radio interno del queso", "Error de Registro", JOptionPane.WARNING_MESSAGE);
@@ -303,6 +315,7 @@ public class RegQueso extends JDialog {
 								clean();
 							}
 						} else {
+							selected.setNombre(txtNombre.getText());
 							selected.setPrecioBase(new Float(spnPrecioBase.getValue().toString()));
 							selected.setPrecioUnitario(new Float(spnUnitario.getValue().toString()));
 							
@@ -347,6 +360,7 @@ public class RegQueso extends JDialog {
 	private void loadQueso() {
 		if (selected != null) {
 			txtCodigo.setText(selected.getId());
+			txtNombre.setText(selected.getNombre());
 			spnPrecioBase.setValue(selected.getPrecioBase());
 			spnUnitario.setValue(selected.getPrecioUnitario());
 			
@@ -399,6 +413,7 @@ public class RegQueso extends JDialog {
 
 	private void clean() {
 		txtCodigo.setText("Q-" + Queso.codigo);
+		txtNombre.setText("");
 		spnPrecioBase.setValue(0);
 		spnUnitario.setValue(0);
 		spnRadioEsfera.setValue(0);

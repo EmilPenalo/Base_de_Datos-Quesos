@@ -29,6 +29,7 @@ public class RegCliente extends JDialog {
 	private JTextField txtTelefono;
 	private JComboBox cbxPais;
 	private JComboBox cbxCuidad;
+	private JTextField txtApellido;
 
 	/**
 	 * Launch the application.
@@ -91,7 +92,7 @@ public class RegCliente extends JDialog {
 			{
 				txtNombre = new JTextField();
 				txtNombre.setColumns(10);
-				txtNombre.setBounds(81, 97, 357, 30);
+				txtNombre.setBounds(81, 97, 146, 30);
 				panel.add(txtNombre);
 			}
 			{
@@ -142,6 +143,15 @@ public class RegCliente extends JDialog {
 			cbxCuidad.setEnabled(false);
 			cbxCuidad.setBounds(292, 137, 146, 30);
 			panel.add(cbxCuidad);
+			
+			JLabel lblApellido = new JLabel("Apellido:");
+			lblApellido.setBounds(237, 102, 69, 20);
+			panel.add(lblApellido);
+			
+			txtApellido = new JTextField();
+			txtApellido.setColumns(10);
+			txtApellido.setBounds(292, 97, 146, 30);
+			panel.add(txtApellido);
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -158,7 +168,7 @@ public class RegCliente extends JDialog {
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if (selected == null) {
-							Cliente c = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(), cbxCuidad.getSelectedItem().toString(), cbxPais.getSelectedItem().toString());
+							Cliente c = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(), cbxCuidad.getSelectedItem().toString(), cbxPais.getSelectedItem().toString(), txtApellido.getText());
 							Empresa.getInstance().insertarCliente(c);
 							JOptionPane.showMessageDialog(null, "Registrado satisfactoriamente", "Registro de cliente", JOptionPane.INFORMATION_MESSAGE);
 							clean();
@@ -168,6 +178,7 @@ public class RegCliente extends JDialog {
 							selected.setCuidad(cbxCuidad.getSelectedItem().toString());
 							selected.setPais(cbxPais.getSelectedItem().toString());
 							selected.setTelefono(txtTelefono.getText());
+							selected.setApellido(txtApellido.getText());
 							ListCliente.loadTable();
 							dispose();
 						}
@@ -214,6 +225,7 @@ public class RegCliente extends JDialog {
 			cbxPais.setSelectedIndex(pais);
 			cbxCuidad.setSelectedItem(selected.getCuidad());
 			txtTelefono.setText(selected.getTelefono());
+			txtApellido.setText(selected.getApellido());
 		}
 	}
 
@@ -224,5 +236,7 @@ public class RegCliente extends JDialog {
 		cbxCuidad.setSelectedIndex(0);
 		cbxPais.setSelectedIndex(0);
 		txtTelefono.setText("");
+		txtApellido.setText("");
+		
 	}
 }

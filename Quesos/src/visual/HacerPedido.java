@@ -64,6 +64,7 @@ public class HacerPedido extends JDialog {
 	private JSpinner spnMonto;
 	private JComboBox cbxCuidad;
 	private JComboBox cbxPais;
+	private JTextField txtApellido;
 
 	/**
 	  Launch the application.
@@ -118,12 +119,14 @@ public class HacerPedido extends JDialog {
 
 						txtCodigo.setText(selected.getId());
 						txtNombre.setText(selected.getNombre());
+						txtApellido.setText(selected.getApellido());
 						cbxPais.setSelectedIndex(pais);
 						cbxCuidad.setSelectedItem(selected.getCuidad());
 						txtTelefono.setText(selected.getTelefono());
 					} else {
 						txtCodigo.setText("C-" + Cliente.codigo);
 						txtNombre.setEditable(true);
+						txtApellido.setEditable(true);
 						cbxPais.setEnabled(true);
 						cbxCuidad.setEnabled(true);
 						txtTelefono.setEditable(true);
@@ -146,7 +149,7 @@ public class HacerPedido extends JDialog {
 			txtNombre = new JTextField();
 			txtNombre.setEditable(false);
 			txtNombre.setColumns(10);
-			txtNombre.setBounds(81, 57, 357, 30);
+			txtNombre.setBounds(81, 57, 146, 30);
 			panel_1.add(txtNombre);
 			
 			JLabel lblCodigo = new JLabel("Codigo:");
@@ -198,6 +201,16 @@ public class HacerPedido extends JDialog {
 			cbxCuidad.setEnabled(false);
 			cbxCuidad.setBounds(292, 98, 146, 30);
 			panel_1.add(cbxCuidad);
+			
+			JLabel lblApellido = new JLabel("Apellido:");
+			lblApellido.setBounds(237, 62, 69, 20);
+			panel_1.add(lblApellido);
+			
+			txtApellido = new JTextField();
+			txtApellido.setEditable(false);
+			txtApellido.setColumns(10);
+			txtApellido.setBounds(292, 57, 146, 30);
+			panel_1.add(txtApellido);
 			
 			JLabel lblNewLabel = new JLabel("Disponibles:");
 			lblNewLabel.setBounds(15, 265, 163, 20);
@@ -311,7 +324,7 @@ public class HacerPedido extends JDialog {
 							if (!txtCedula.getText().equals("")) {
 								
 								if (selected == null) {
-									selected = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(), cbxCuidad.getSelectedItem().toString(), cbxPais.getSelectedItem().toString());
+									selected = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(), cbxCuidad.getSelectedItem().toString(), cbxPais.getSelectedItem().toString(), txtApellido.getText());
 									Empresa.getInstance().insertarCliente(selected);
 								}
 								ArrayList<Queso> compra = new ArrayList<>();
@@ -371,12 +384,14 @@ public class HacerPedido extends JDialog {
 		listModelDisp.removeAllElements();
 		
 		txtNombre.setText("");
+		txtApellido.setText("");
 		cbxPais.setSelectedIndex(0);
 		cbxCuidad.setSelectedIndex(0);
 		txtCodigo.setText("");
 		txtTelefono.setText("");
 		
 		txtNombre.setEditable(false);
+		txtApellido.setEditable(false);
 		txtTelefono.setEditable(false);
 		cbxPais.setEnabled(false);
 		cbxCuidad.setEnabled(false);

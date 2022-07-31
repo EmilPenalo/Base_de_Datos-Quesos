@@ -10,7 +10,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import logico.Empresa;
-import logico.Servidor;
 
 import javax.swing.border.BevelBorder;
 import java.awt.FlowLayout;
@@ -123,7 +122,7 @@ public class Principal extends JFrame {
 			    }
 			    catch (IOException ioe)
 			    {
-				  JOptionPane.showMessageDialog(null, "Comunicación rechazada.", "Error", JOptionPane.ERROR_MESSAGE);
+				  JOptionPane.showMessageDialog(null, "Comunicaciï¿½n rechazada.", "Error", JOptionPane.ERROR_MESSAGE);
 
 			      System.exit(1);
 			    } 
