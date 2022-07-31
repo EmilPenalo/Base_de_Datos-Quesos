@@ -5,8 +5,8 @@ public class Esfera extends Queso {
 	private static final long serialVersionUID = 1L;
 	private int radio;
 	
-	public Esfera(String id, float precioBase, float precioUnitario, int radio) {
-		super(id, precioBase, precioUnitario);
+	public Esfera(String id, String nombre, float precioBase, float precioUnitario, int radio) {
+		super(id, nombre, precioBase, precioUnitario);
 		this.radio = radio;
 	}
 

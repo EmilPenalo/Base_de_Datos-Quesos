@@ -6,8 +6,8 @@ public class Cilindro extends Queso {
 	protected int radio;
 	protected int longitud;
 	
-	public Cilindro(String id, float precioBase, float precioUnitario, int radio, int longitud) {
-		super(id, precioBase, precioUnitario);
+	public Cilindro(String id, String nombre, float precioBase, float precioUnitario, int radio, int longitud) {
+		super(id, nombre, precioBase, precioUnitario);
 		this.radio = radio;
 		this.longitud = longitud;
 	}

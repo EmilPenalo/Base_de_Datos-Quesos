@@ -79,7 +79,7 @@ public class ListQueso extends JDialog {
 				JScrollPane scrollPane = new JScrollPane();
 				panel.add(scrollPane, BorderLayout.CENTER);
 				{
-					String headers[] = {"Codigo", "Volumen", "Precio", "Figura"};
+					String headers[] = {"Codigo", "Nombre", "Volumen", "Precio", "Figura"};
 					model = new DefaultTableModel();
 					model.setColumnIdentifiers(headers);
 					table = new JTable();
@@ -189,19 +189,20 @@ public class ListQueso extends JDialog {
 				for (Queso q : Empresa.getInstance().getQuesos()) {
 					
 					rows[0] = q.getId();
-					rows[1] = q.precio();
-					rows[2] = q.volumen();
+					rows[1] = q.getNombre();
+					rows[2] = q.precio();
+					rows[3] = q.volumen();
 					
 					if (q instanceof Esfera) {
-						rows[3] = "Esfera";
+						rows[4] = "Esfera";
 					}
 					
 					if (q instanceof Cilindro) {
-						rows[3] = "Cilindro";
+						rows[4] = "Cilindro";
 					}
 					
 					if (q instanceof CilindroHueco) {
-						rows[3] = "Cilindro Hueco";
+						rows[4] = "Cilindro Hueco";
 					}
 							
 					model.addRow(rows);
@@ -210,19 +211,20 @@ public class ListQueso extends JDialog {
 				for (Queso q : quesos) {
 					
 					rows[0] = q.getId();
-					rows[1] = q.precio();
-					rows[2] = q.volumen();
+					rows[1] = q.getNombre();
+					rows[2] = q.precio();
+					rows[3] = q.volumen();
 					
 					if (q instanceof Esfera) {
-						rows[3] = "Esfera";
+						rows[4] = "Esfera";
 					}
 					
 					if (q instanceof Cilindro) {
-						rows[3] = "Cilindro";
+						rows[4] = "Cilindro";
 					}
 					
 					if (q instanceof CilindroHueco) {
-						rows[3] = "Cilindro Hueco";
+						rows[4] = "Cilindro Hueco";
 					}
 							
 					model.addRow(rows);
@@ -235,10 +237,10 @@ public class ListQueso extends JDialog {
 				for (Queso q : Empresa.getInstance().getQuesos()) {
 					
 					if (q instanceof Esfera) {
-						rows[0] = q.getId();
-						rows[1] = q.precio();
-						rows[2] = q.volumen();
-						rows[3] = "Esfera";
+						rows[1] = q.getNombre();
+						rows[2] = q.precio();
+						rows[3] = q.volumen();
+						rows[4] = "Esfera";
 						
 						model.addRow(rows);
 					}	
@@ -246,10 +248,10 @@ public class ListQueso extends JDialog {
 			} else {
 				for (Queso q : quesos) {
 					if (q instanceof Esfera) {
-						rows[0] = q.getId();
-						rows[1] = q.precio();
-						rows[2] = q.volumen();
-						rows[3] = "Esfera";
+						rows[1] = q.getNombre();
+						rows[2] = q.precio();
+						rows[3] = q.volumen();
+						rows[4] = "Esfera";
 						
 						model.addRow(rows);
 					}
@@ -262,10 +264,10 @@ public class ListQueso extends JDialog {
 				for (Queso q : Empresa.getInstance().getQuesos()) {
 
 					if (q instanceof Cilindro && !(q instanceof CilindroHueco)) {
-						rows[0] = q.getId();
-						rows[1] = q.precio();
-						rows[2] = q.volumen();
-						rows[3] = "Cilindro";
+						rows[1] = q.getNombre();
+						rows[2] = q.precio();
+						rows[3] = q.volumen();
+						rows[4] = "Cilindro";
 						
 						model.addRow(rows);
 					}
@@ -273,10 +275,10 @@ public class ListQueso extends JDialog {
 			} else {
 				for (Queso q : quesos) {
 					if (q instanceof Cilindro && !(q instanceof CilindroHueco)) {
-						rows[0] = q.getId();
-						rows[1] = q.precio();
-						rows[2] = q.volumen();
-						rows[3] = "Cilindro";
+						rows[1] = q.getNombre();
+						rows[2] = q.precio();
+						rows[3] = q.volumen();
+						rows[4] = "Cilindro";
 						
 						model.addRow(rows);
 					}
@@ -289,10 +291,10 @@ public class ListQueso extends JDialog {
 				for (Queso q : Empresa.getInstance().getQuesos()) {
 
 					if (q instanceof CilindroHueco) {
-						rows[0] = q.getId();
-						rows[1] = q.precio();
-						rows[2] = q.volumen();
-						rows[3] = "Cilindro Hueco";
+						rows[1] = q.getNombre();
+						rows[2] = q.precio();
+						rows[3] = q.volumen();
+						rows[4] = "Cilindro Hueco";
 						
 						model.addRow(rows);
 					}			
@@ -300,10 +302,10 @@ public class ListQueso extends JDialog {
 			} else {
 				for (Queso q : quesos) {
 					if (q instanceof CilindroHueco) {
-						rows[0] = q.getId();
-						rows[1] = q.precio();
-						rows[2] = q.volumen();
-						rows[3] = "Cilindro Hueco";
+						rows[1] = q.getNombre();
+						rows[2] = q.precio();
+						rows[3] = q.volumen();
+						rows[4] = "Cilindro Hueco";
 						
 						model.addRow(rows);
 					}	
