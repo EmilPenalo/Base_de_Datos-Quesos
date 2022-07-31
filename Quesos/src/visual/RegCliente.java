@@ -3,6 +3,7 @@ package visual;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -16,16 +17,18 @@ import javax.swing.border.TitledBorder;
 
 import logico.Cliente;
 import logico.Empresa;
+import javax.swing.JComboBox;
 
 public class RegCliente extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtCodigo;
 	private JTextField txtNombre;
-	private JTextField txtDireccion;
 	private Cliente selected;
 	private JTextField txtCedula;
 	private JTextField txtTelefono;
+	private JComboBox cbxPais;
+	private JComboBox cbxCuidad;
 
 	/**
 	 * Launch the application.
@@ -53,7 +56,7 @@ public class RegCliente extends JDialog {
 			setTitle("Modificar Cliente");
 		}
 		
-		setBounds(100, 100, 450, 317);
+		setBounds(100, 100, 471, 317);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
@@ -88,19 +91,13 @@ public class RegCliente extends JDialog {
 			{
 				txtNombre = new JTextField();
 				txtNombre.setColumns(10);
-				txtNombre.setBounds(81, 97, 330, 30);
+				txtNombre.setBounds(81, 97, 357, 30);
 				panel.add(txtNombre);
 			}
 			{
-				JLabel lblDireccion = new JLabel("Direccion:");
-				lblDireccion.setBounds(15, 142, 112, 20);
-				panel.add(lblDireccion);
-			}
-			{
-				txtDireccion = new JTextField();
-				txtDireccion.setColumns(10);
-				txtDireccion.setBounds(81, 137, 330, 30);
-				panel.add(txtDireccion);
+				JLabel lblPais = new JLabel("Pais:");
+				lblPais.setBounds(15, 142, 49, 20);
+				panel.add(lblPais);
 			}
 			
 			JLabel lblCedula = new JLabel("Cedula:");
@@ -118,8 +115,33 @@ public class RegCliente extends JDialog {
 			
 			txtTelefono = new JTextField();
 			txtTelefono.setColumns(10);
-			txtTelefono.setBounds(81, 178, 330, 30);
+			txtTelefono.setBounds(81, 178, 357, 30);
 			panel.add(txtTelefono);
+			
+			JLabel lblCuidad = new JLabel("Cuidad:");
+			lblCuidad.setBounds(237, 145, 49, 14);
+			panel.add(lblCuidad);
+			
+			cbxPais = new JComboBox();
+			cbxPais.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (cbxPais.getSelectedIndex() == 0) {
+						cbxCuidad.setEnabled(false);
+						cbxCuidad.setSelectedIndex(0);
+					} else {
+						cbxCuidad.setEnabled(true);
+						loadCuidades(cbxPais.getSelectedIndex());
+					}
+				}
+			});
+			loadPaises();
+			cbxPais.setBounds(81, 138, 146, 30);
+			panel.add(cbxPais);
+			
+			cbxCuidad = new JComboBox();
+			cbxCuidad.setEnabled(false);
+			cbxCuidad.setBounds(292, 137, 146, 30);
+			panel.add(cbxCuidad);
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -136,14 +158,15 @@ public class RegCliente extends JDialog {
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if (selected == null) {
-							Cliente c = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtDireccion.getText(), txtTelefono.getText());
+							Cliente c = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(), cbxCuidad.getSelectedItem().toString(), cbxPais.getSelectedItem().toString());
 							Empresa.getInstance().insertarCliente(c);
 							JOptionPane.showMessageDialog(null, "Registrado satisfactoriamente", "Registro de cliente", JOptionPane.INFORMATION_MESSAGE);
 							clean();
 						} else {
 							selected.setCedula(txtCedula.getText());
 							selected.setNombre(txtNombre.getText());
-							selected.setDireccion(txtDireccion.getText());
+							selected.setCuidad(cbxCuidad.getSelectedItem().toString());
+							selected.setPais(cbxPais.getSelectedItem().toString());
 							selected.setTelefono(txtTelefono.getText());
 							ListCliente.loadTable();
 							dispose();
@@ -168,12 +191,28 @@ public class RegCliente extends JDialog {
 			loadCliente();
 		}
 	}
+	
+// General call should be moved to Empresa for it to be used in HacerPedido as well
+	private void loadPaises() {
+//		Call DataBase and set Model to the available countries
+//		Do we need to be able to add more countries?
+		cbxPais.setModel(new DefaultComboBoxModel(new String[] {"<Seleccione>", "Esfera", "Cilindro", "Cilindro Hueco"}));
+	}
+	
+	private void loadCuidades(Integer pais) {
+//		Same as loadPaises()
+		cbxCuidad.setModel(new DefaultComboBoxModel(new String[] {"<Seleccione>", "Esfera" + pais.toString(), "Cilindro", "Cilindro Hueco"}));
+	}
 
 	private void loadCliente() {
 		if (selected != null) {
+			Integer pais = Empresa.getInstance().getPaisbyNombre(selected.getPais());
+			loadCuidades(pais);
+
 			txtCedula.setText(selected.getCedula());
 			txtNombre.setText(selected.getNombre());
-			txtDireccion.setText(selected.getDireccion());
+			cbxPais.setSelectedIndex(pais);
+			cbxCuidad.setSelectedItem(selected.getCuidad());
 			txtTelefono.setText(selected.getTelefono());
 		}
 	}
@@ -182,7 +221,8 @@ public class RegCliente extends JDialog {
 		txtCodigo.setText("C-" + Cliente.codigo);
 		txtCedula.setText("");
 		txtNombre.setText("");
-		txtDireccion.setText("");
+		cbxCuidad.setSelectedIndex(0);
+		cbxPais.setSelectedIndex(0);
 		txtTelefono.setText("");
 	}
 }

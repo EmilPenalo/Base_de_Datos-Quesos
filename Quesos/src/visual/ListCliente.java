@@ -69,7 +69,7 @@ public class ListCliente extends JDialog {
 				JScrollPane scrollPane = new JScrollPane();
 				panel.add(scrollPane, BorderLayout.CENTER);
 				{
-					String headers[] = {"Codigo", "Cedula", "Nombre", "Telefono"};
+					String headers[] = {"Codigo", "Cedula", "Nombre", "Telefono", "Pais", "Cuidad"};
 					model = new DefaultTableModel();
 					model.setColumnIdentifiers(headers);
 					table = new JTable();
@@ -168,6 +168,8 @@ public class ListCliente extends JDialog {
 			rows[1] = c.getCedula();
 			rows[2] = c.getNombre();
 			rows[3] = c.getTelefono();
+			rows[4] = c.getPais();
+			rows[5] = c.getCuidad();
 					
 			model.addRow(rows);
 		}

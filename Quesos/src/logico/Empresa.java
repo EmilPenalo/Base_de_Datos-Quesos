@@ -206,8 +206,13 @@ public class Empresa implements Serializable{
 			Connection con = DriverManager.getConnection(url);
 			return con;
 		}catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.toString(), "Error de conexión", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, e.toString(), "Error de conexiï¿½n", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
+	}
+	
+	public Integer getPaisbyNombre(String nombre) {
+//		Get id from database
+		return 0;
 	}
 }

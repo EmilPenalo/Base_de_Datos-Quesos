@@ -45,13 +45,13 @@ import javax.swing.SpinnerNumberModel;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.JComboBox;
 
 public class HacerPedido extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtCedula;
 	private JTextField txtNombre;
-	private JTextField txtDireccion;
 	private Cliente selected = null;
 	private JButton btnDerecha;
 	private JButton btnIzquierda;
@@ -62,6 +62,8 @@ public class HacerPedido extends JDialog {
 	private JTextField txtCodigo;
 	private JTextField txtTelefono;
 	private JSpinner spnMonto;
+	private JComboBox cbxCuidad;
+	private JComboBox cbxPais;
 
 	/**
 	  Launch the application.
@@ -81,7 +83,7 @@ public class HacerPedido extends JDialog {
 	 */
 	public HacerPedido() {
 		setTitle("Manejo de Prestamos");
-		setBounds(100, 100, 480, 628);
+		setBounds(100, 100, 502, 628);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
@@ -111,14 +113,19 @@ public class HacerPedido extends JDialog {
 					selected = Empresa.getInstance().findClienteByCedula(txtCedula.getText());
 					clean();
 					if (selected != null) {
+						Integer pais = Empresa.getInstance().getPaisbyNombre(selected.getPais());
+//						loadCuidades(pais);
+
 						txtCodigo.setText(selected.getId());
 						txtNombre.setText(selected.getNombre());
-						txtDireccion.setText(selected.getDireccion());
+						cbxPais.setSelectedIndex(pais);
+						cbxCuidad.setSelectedItem(selected.getCuidad());
 						txtTelefono.setText(selected.getTelefono());
 					} else {
 						txtCodigo.setText("C-" + Cliente.codigo);
 						txtNombre.setEditable(true);
-						txtDireccion.setEditable(true);
+						cbxPais.setEnabled(true);
+						cbxCuidad.setEnabled(true);
 						txtTelefono.setEditable(true);
 					}
 				}
@@ -129,7 +136,7 @@ public class HacerPedido extends JDialog {
 			JPanel panel_1 = new JPanel();
 			panel_1.setLayout(null);
 			panel_1.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			panel_1.setBounds(15, 52, 418, 180);
+			panel_1.setBounds(15, 52, 450, 180);
 			panel.add(panel_1);
 			
 			JLabel label_1 = new JLabel("Nombre:");
@@ -139,18 +146,8 @@ public class HacerPedido extends JDialog {
 			txtNombre = new JTextField();
 			txtNombre.setEditable(false);
 			txtNombre.setColumns(10);
-			txtNombre.setBounds(81, 57, 330, 30);
+			txtNombre.setBounds(81, 57, 357, 30);
 			panel_1.add(txtNombre);
-			
-			JLabel label_2 = new JLabel("Direccion:");
-			label_2.setBounds(15, 103, 112, 20);
-			panel_1.add(label_2);
-			
-			txtDireccion = new JTextField();
-			txtDireccion.setEditable(false);
-			txtDireccion.setColumns(10);
-			txtDireccion.setBounds(81, 98, 330, 30);
-			panel_1.add(txtDireccion);
 			
 			JLabel lblCodigo = new JLabel("Codigo:");
 			lblCodigo.setBounds(15, 21, 69, 20);
@@ -169,8 +166,38 @@ public class HacerPedido extends JDialog {
 			txtTelefono = new JTextField();
 			txtTelefono.setEditable(false);
 			txtTelefono.setColumns(10);
-			txtTelefono.setBounds(81, 139, 330, 30);
+			txtTelefono.setBounds(81, 139, 357, 30);
 			panel_1.add(txtTelefono);
+			
+			JLabel lblPais = new JLabel("Pais:");
+			lblPais.setBounds(15, 103, 49, 20);
+			panel_1.add(lblPais);
+			
+			cbxPais = new JComboBox();
+			cbxPais.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (cbxPais.getSelectedIndex() == 0) {
+						cbxCuidad.setEnabled(false);
+						cbxCuidad.setSelectedIndex(0);
+					} else {
+						cbxCuidad.setEnabled(true);
+//						loadCuidades(cbxPais.getSelectedIndex());
+					}
+				}
+			});
+			cbxPais.setEnabled(false);
+//			loadPaises();
+			cbxPais.setBounds(81, 99, 146, 30);
+			panel_1.add(cbxPais);
+			
+			JLabel lblCuidad = new JLabel("Cuidad:");
+			lblCuidad.setBounds(237, 106, 49, 14);
+			panel_1.add(lblCuidad);
+			
+			cbxCuidad = new JComboBox();
+			cbxCuidad.setEnabled(false);
+			cbxCuidad.setBounds(292, 98, 146, 30);
+			panel_1.add(cbxCuidad);
 			
 			JLabel lblNewLabel = new JLabel("Disponibles:");
 			lblNewLabel.setBounds(15, 265, 163, 20);
@@ -181,7 +208,7 @@ public class HacerPedido extends JDialog {
 			panel.add(lblNewLabel_1);
 			
 			JSeparator separator = new JSeparator();
-			separator.setBounds(15, 248, 418, 2);
+			separator.setBounds(15, 248, 450, 2);
 			panel.add(separator);
 			
 			JScrollPane scrollPane = new JScrollPane();
@@ -284,7 +311,7 @@ public class HacerPedido extends JDialog {
 							if (!txtCedula.getText().equals("")) {
 								
 								if (selected == null) {
-									selected = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtDireccion.getText(), txtTelefono.getText());
+									selected = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(), cbxCuidad.getSelectedItem().toString(), cbxPais.getSelectedItem().toString());
 									Empresa.getInstance().insertarCliente(selected);
 								}
 								ArrayList<Queso> compra = new ArrayList<>();
@@ -344,13 +371,15 @@ public class HacerPedido extends JDialog {
 		listModelDisp.removeAllElements();
 		
 		txtNombre.setText("");
-		txtDireccion.setText("");
+		cbxPais.setSelectedIndex(0);
+		cbxCuidad.setSelectedIndex(0);
 		txtCodigo.setText("");
 		txtTelefono.setText("");
 		
 		txtNombre.setEditable(false);
-		txtDireccion.setEditable(false);
 		txtTelefono.setEditable(false);
+		cbxPais.setEnabled(false);
+		cbxCuidad.setEnabled(false);
 		loadDisponibles();
 	}
 
