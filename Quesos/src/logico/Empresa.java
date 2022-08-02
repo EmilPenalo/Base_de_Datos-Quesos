@@ -5,7 +5,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
@@ -160,20 +162,7 @@ public class Empresa {
 
 	public void crearFactura(Cliente c, ArrayList<Queso> compra) {
 		Factura f = new Factura("F-" + Factura.codigo, c, compra);
-		insertarFactura(f);
-		
-		try {
-			String texto = f.toText();
-			FileWriter escritor = new FileWriter("factura/factura.txt");
-			escritor.write(texto);
-			escritor.close();
-			
-			Principal.getSalidaSocket().writeUTF(texto);
-			Principal.getSalidaSocket().flush();
-	      
-	    } catch (IOException e) {
-	      e.printStackTrace();
-	    }
+		insertarFactura(f);	
 	}
 	
 	public ArrayList<Factura> getFacturasOfCliente(String cedula) {
@@ -208,8 +197,44 @@ public class Empresa {
 		}
 	}
 	
+	public void loadClientes() {
+		if(database!=null) {
+			String query = "SELECT Cliente.id_cliente, Cliente.cedula, Cliente.nombre,Cliente.apellido,Ciudad.nombre AS ciudad,Pais.nombre AS pais,Cliente.telefono FROM Cliente, Pais, Ciudad WHERE Ciudad.id_ciudad = Cliente.id_ciudad AND ciudad.id_pais = Pais.id_pais";
+			try {
+				Statement sql = database.createStatement();
+				ResultSet clientes = sql.executeQuery(query);
+				
+				while(clientes.next()) {
+					String id = clientes.getString(1);
+					String cedula = clientes.getString(2);
+					String nombre = clientes.getString(3);
+					String apellido = clientes.getString(4);
+					String ciudad = clientes.getString(5);
+					String pais = clientes.getString(6);
+					String telefono = clientes.getString(7);
+					Cliente c = new Cliente(id, cedula, nombre, telefono, ciudad, pais, apellido);
+					insertarCliente(c);
+				}
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(null, "Error al cargar datos", "Error", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			} 
+		}
+	}
+	
 	public Integer getPaisbyNombre(String nombre) {
-//		Get id from database
-		return 0;
+		Integer id = -1;
+		String query ="SELECT id_pais FROM Pais WHERE nombre LIKE" + "'" + nombre + "'";
+		try {
+			Statement sql = database.createStatement();
+			ResultSet res = sql.executeQuery(query);
+			while(res.next()) {
+				id = res.getInt(1);
+			}
+			return id;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }

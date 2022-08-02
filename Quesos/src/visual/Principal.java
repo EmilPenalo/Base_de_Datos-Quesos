@@ -70,6 +70,8 @@ public class Principal extends JFrame {
 			}
 		});
 		
+		Empresa.database = Empresa.getSqlConnection();
+		
 		setTitle("Registro de Quesos");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 540, 398);
@@ -80,6 +82,10 @@ public class Principal extends JFrame {
 		setLocationRelativeTo(null);
 		
 		setResizable(false);
+		
+		if(Empresa.database!=null) {
+			Empresa.getInstance().loadClientes();
+		}
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
