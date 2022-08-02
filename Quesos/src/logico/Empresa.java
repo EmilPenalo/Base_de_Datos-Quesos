@@ -3,7 +3,6 @@ package logico;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -13,9 +12,7 @@ import javax.swing.JOptionPane;
 
 import visual.Principal;
 
-public class Empresa implements Serializable{
-
-	private static final long serialVersionUID = 1L;
+public class Empresa {
 	
 	private ArrayList<Cliente> clientes;
 	private ArrayList<Factura> facturas;

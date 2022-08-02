@@ -41,18 +41,6 @@ public class Principal extends JFrame {
 
 	private JPanel contentPane;
 	private Dimension dim;
-	
-	private static Socket sfd = null;
-	private static DataInputStream EntradaSocket;
-	private static DataOutputStream SalidaSocket;
-
-	public static DataInputStream getEntradaSocket() {
-		return EntradaSocket;
-	}
-
-	public static DataOutputStream getSalidaSocket() {
-		return SalidaSocket;
-	}
 
 	/**
 	 * Launch the application.
@@ -60,46 +48,6 @@ public class Principal extends JFrame {
 	public static void main(String[] args) {	    
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-
-				FileInputStream empresaInput;
-				FileOutputStream empresaOutput;
-				ObjectInputStream empresaReader;
-				ObjectOutputStream empresaWriter;
-					
-				try {
-					
-					empresaInput = new FileInputStream ("empresa.dat");
-					empresaReader = new ObjectInputStream(empresaInput);
-					Empresa temp = (Empresa) empresaReader.readObject();
-					Empresa.setTienda(temp);
-					
-					empresaInput.close();
-					empresaReader.close();
-					
-				} catch (FileNotFoundException e) {
-					
-					try {
-						
-						empresaOutput = new  FileOutputStream("empresa.dat");
-						empresaWriter = new ObjectOutputStream(empresaOutput);
-
-						empresaWriter.writeObject(Empresa.getInstance());
-						
-						empresaOutput.close();
-						empresaWriter.close();
-						
-					} catch (FileNotFoundException e1) {
-						e.printStackTrace();
-					} catch (IOException e1) {
-						e.printStackTrace();
-					}
-					
-					
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 				
 				try {
 					Principal frame = new Principal();
@@ -108,24 +56,6 @@ public class Principal extends JFrame {
 					e.printStackTrace();
 				}
 				
-
-				try
-			    {
-			      sfd = new Socket("127.0.0.1",8000);
-			      EntradaSocket = new DataInputStream(new BufferedInputStream(sfd.getInputStream()));
-			      SalidaSocket = new DataOutputStream(new BufferedOutputStream(sfd.getOutputStream()));
-			    }
-			    catch (UnknownHostException uhe)
-			    {
-				  JOptionPane.showMessageDialog(null, "No se puede acceder al servidor.", "Error", JOptionPane.ERROR_MESSAGE);
-			      System.exit(1);
-			    }
-			    catch (IOException ioe)
-			    {
-				  JOptionPane.showMessageDialog(null, "Comunicaci�n rechazada.", "Error", JOptionPane.ERROR_MESSAGE);
-
-			      System.exit(1);
-			    } 
 			}
 		});
 	}
@@ -137,31 +67,6 @@ public class Principal extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				FileOutputStream empresaOutput;
-				ObjectOutputStream empresaWrite;
-				
-				if (sfd != null) {
-					try {
-					  sfd.close();
-					} catch (IOException ioe) {
-					  System.out.println("Error: "+ioe);
-					}
-				}
-				
-				try {
-					empresaOutput = new  FileOutputStream("empresa.dat");
-					empresaWrite = new ObjectOutputStream(empresaOutput);
-					empresaWrite.writeObject(Empresa.getInstance());
-					
-					empresaOutput.close();
-					empresaWrite.close();
-
-				} catch (FileNotFoundException e1) {
-					e1.printStackTrace();
-		
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
 			}
 		});
 		
