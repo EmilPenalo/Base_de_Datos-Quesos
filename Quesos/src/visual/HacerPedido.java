@@ -41,11 +41,15 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.JSpinner;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
+
 import javax.swing.SpinnerNumberModel;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JComboBox;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class HacerPedido extends JDialog {
 
@@ -65,7 +69,10 @@ public class HacerPedido extends JDialog {
 	private JComboBox cbxCuidad;
 	private JComboBox cbxPais;
 	private JTextField txtApellido;
-
+	private JSpinner spnCantidad;
+	
+	private Hashtable<String, Integer> cantidades;
+	
 	/**
 	  Launch the application.
 	 */
@@ -217,7 +224,7 @@ public class HacerPedido extends JDialog {
 			panel.add(lblNewLabel);
 			
 			JLabel lblNewLabel_1 = new JLabel("A comprar:");
-			lblNewLabel_1.setBounds(270, 265, 163, 20);
+			lblNewLabel_1.setBounds(302, 270, 163, 20);
 			panel.add(lblNewLabel_1);
 			
 			JSeparator separator = new JSeparator();
@@ -239,6 +246,10 @@ public class HacerPedido extends JDialog {
 					
 					if (index != -1) {
 						btnDerecha.setEnabled(true);
+						spnCantidad.setEnabled(true);
+						
+						String aux = listModelCompra.getElementAt(index);
+						updateCantidad(aux.substring(0, aux.indexOf('|')));
 					}
 				}
 			});
@@ -249,7 +260,7 @@ public class HacerPedido extends JDialog {
 			
 			JScrollPane scrollPane_1 = new JScrollPane();
 			scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-			scrollPane_1.setBounds(270, 301, 163, 180);
+			scrollPane_1.setBounds(302, 301, 163, 180);
 			panel.add(scrollPane_1);
 			
 			listCompra = new JList<String>();
@@ -262,6 +273,10 @@ public class HacerPedido extends JDialog {
 					
 					if (index != -1) {
 						btnIzquierda.setEnabled(true);
+						spnCantidad.setEnabled(true);
+						
+						String aux = listModelCompra.getElementAt(index);
+						updateCantidad(aux.substring(0, aux.indexOf('|')));
 					}
 				}
 			});
@@ -276,12 +291,14 @@ public class HacerPedido extends JDialog {
 					listModelCompra.addElement(aux);
 					listModelDisp.remove(listDisponible.getSelectedIndex());
 					btnDerecha.setEnabled(false);
+					spnCantidad.setEnabled(false);
+					spnCantidad.setValue(0);
 					
 					updateMonto();
 				}
 			});
 			btnDerecha.setEnabled(false);
-			btnDerecha.setBounds(188, 346, 70, 30);
+			btnDerecha.setBounds(204, 376, 70, 30);
 			panel.add(btnDerecha);
 			
 			btnIzquierda = new JButton("<<");
@@ -291,24 +308,37 @@ public class HacerPedido extends JDialog {
 					listModelDisp.addElement(aux);
 					listModelCompra.remove(listCompra.getSelectedIndex());
 					btnIzquierda.setEnabled(false);
+					spnCantidad.setEnabled(false);
+					spnCantidad.setValue(0);
 					
 					updateMonto();
 				}
 			});
 			btnIzquierda.setEnabled(false);
-			btnIzquierda.setBounds(188, 406, 70, 30);
+			btnIzquierda.setBounds(204, 436, 70, 30);
 			panel.add(btnIzquierda);
 			
 			JLabel lblNewLabel_2 = new JLabel("Monto a pagar:");
-			lblNewLabel_2.setBounds(183, 502, 115, 20);
+			lblNewLabel_2.setBounds(215, 497, 115, 20);
 			panel.add(lblNewLabel_2);
 			
 			spnMonto = new JSpinner();
 			spnMonto.setFont(new Font("Tahoma", Font.BOLD, 18));
 			spnMonto.setModel(new SpinnerNumberModel(new Float(0), new Float(0), null, new Float(1)));
 			spnMonto.setEnabled(false);
-			spnMonto.setBounds(270, 497, 163, 30);
+			spnMonto.setBounds(302, 492, 163, 30);
 			panel.add(spnMonto);
+			
+			spnCantidad = new JSpinner();
+			spnCantidad.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					//Update hashtable when value changes
+				}
+			});
+			spnCantidad.setModel(new SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
+			spnCantidad.setEnabled(false);
+			spnCantidad.setBounds(204, 318, 70, 30);
+			panel.add(spnCantidad);
 			
 		}
 		{
@@ -328,14 +358,17 @@ public class HacerPedido extends JDialog {
 									Empresa.getInstance().insertarCliente(selected);
 								}
 								ArrayList<Queso> compra = new ArrayList<>();
+								ArrayList<Integer> cantsCompra = new ArrayList<>();
 								for (int i = 0; i < listModelCompra.size(); i++) {
 									String aux = listModelCompra.getElementAt(i);
-									Queso temp = Empresa.getInstance().findQuesoById(aux.substring(0, aux.indexOf('|')));
+									String id = aux.substring(0, aux.indexOf('|'));
+									
+									Queso temp = Empresa.getInstance().findQuesoById(id);
 									compra.add(temp);
-									Empresa.getInstance().eliminarQueso(temp);
+									cantsCompra.add(cantidades.get(id));
 									
 								}
-								Empresa.getInstance().crearFactura(selected, compra);
+								Empresa.getInstance().crearFactura(selected, compra, cantsCompra);
 								
 								JOptionPane.showMessageDialog(null, "Operacion Satisfactoria", "Informacion", JOptionPane.INFORMATION_MESSAGE);
 								txtCedula.setText("");
@@ -372,9 +405,12 @@ public class HacerPedido extends JDialog {
 	private void updateMonto() {
 		float total = 0;
 		for (int i = 0; i < listModelCompra.size(); i++) {
+			
 			String aux = listModelCompra.getElementAt(i);
-			Queso q = Empresa.getInstance().findQuesoById(aux.substring(0, aux.indexOf('|')));
-			total += q.precio();
+			String id = aux.substring(0, aux.indexOf('|'));
+			
+			Queso q = Empresa.getInstance().findQuesoById(id);
+			total += q.precio()*cantidades.get(id);
 		}
 		spnMonto.setValue(total);
 	}
@@ -389,12 +425,16 @@ public class HacerPedido extends JDialog {
 		cbxCuidad.setSelectedIndex(0);
 		txtCodigo.setText("");
 		txtTelefono.setText("");
+		spnCantidad.setValue(0);
 		
+		spnCantidad.setEnabled(false);
 		txtNombre.setEditable(false);
 		txtApellido.setEditable(false);
 		txtTelefono.setEditable(false);
 		cbxPais.setEnabled(false);
 		cbxCuidad.setEnabled(false);
+		
+		cantidades.clear();
 		loadDisponibles();
 	}
 
@@ -402,6 +442,7 @@ public class HacerPedido extends JDialog {
 		listModelDisp.removeAllElements();
 		for (Queso q : Empresa.getInstance().getQuesos()) {
 			String aux = new String(q.getId());
+			cantidades.put(aux, 0);
 			
 			if (q instanceof Esfera) {
 				aux += "|Esfera";
@@ -412,7 +453,13 @@ public class HacerPedido extends JDialog {
 			if (q instanceof CilindroHueco) {
 				aux += " Hueco";
 			}
+			aux += "|" + q.getNombre();
 			listModelDisp.addElement(aux);
 		}
+			
+	}
+	
+	private void updateCantidad(String id) {
+		spnCantidad.setValue(cantidades.get(id));
 	}
 }

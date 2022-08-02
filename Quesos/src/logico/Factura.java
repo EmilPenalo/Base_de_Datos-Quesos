@@ -10,16 +10,26 @@ public class Factura {
 	private String id;
 	private Date fecha;
 	private Cliente cliente;
+	private ArrayList<Integer> cantidades;
 	private ArrayList<Queso> quesos;
 	public static int codigo = 1;
 	
-	public Factura(String id, Cliente cliente, ArrayList<Queso> quesos) {
+	public Factura(String id, Cliente cliente, ArrayList<Queso> quesos, ArrayList<Integer> cantidades) {
 		super();
 		this.id = id;
 		this.fecha = new Date();
 		this.cliente = cliente;
 		this.quesos = quesos;
+		this.cantidades = cantidades;
 		Factura.codigo++;
+	}
+	
+	public ArrayList<Integer> getCantidades() {
+		return cantidades;
+	}
+	
+	public void setCantidades(ArrayList<Integer> cantidades) {
+		this.cantidades = cantidades;
 	}
 
 	public String getId() {
