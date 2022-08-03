@@ -84,7 +84,11 @@ public class Principal extends JFrame {
 		setResizable(false);
 		
 		if(Empresa.database!=null) {
+			Empresa.getInstance().loadQuesos();
 			Empresa.getInstance().loadClientes();
+			Empresa.getInstance().loadFactura();
+		}else {
+			JOptionPane.showMessageDialog(null, "Error al conectarse a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
 		JMenuBar menuBar = new JMenuBar();

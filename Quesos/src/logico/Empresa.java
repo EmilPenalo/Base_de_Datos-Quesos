@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.naming.spi.DirStateFactory.Result;
 import javax.swing.JOptionPane;
 
 import visual.Principal;
@@ -184,7 +186,7 @@ public class Empresa {
 	+ "database=proyecto_final_grupo3;"
 	+ "user=sa;"
 	+ "password=Eict@2021;"
-	+  "loginTimeout=30;"
+	+  "loginTimeout=10;"
 	+ "encrypt=true;"
 	+ "trustServerCertificate=true;";
 		
@@ -222,9 +224,117 @@ public class Empresa {
 		}
 	}
 	
+	public void loadQuesos() {
+		if(database!=null) {
+			String query = "SELECT Cilindro.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, Cilindro.radio, Cilindro.longitud FROM Queso,Cilindro WHERE Queso.id_queso = Cilindro.id_queso";
+			try {
+				Statement sql = database.createStatement();
+				ResultSet QC = sql.executeQuery(query);
+				
+				while(QC.next()) {
+					String id = QC.getString(1);
+					String nombre = QC.getString(2);
+					float precioBase = new Float(QC.getFloat(3));
+					float precioUnitario = new Float(QC.getFloat(4));
+					int radio = new Integer(QC.getInt(5));
+					int longitud = new Integer(QC.getInt(6));
+					Cilindro qc = new Cilindro(id, nombre, precioBase, precioUnitario, radio, longitud);
+					insettarQueso(qc);
+				}
+				String qchQuery ="SELECT CilindroHueco.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, CilindroHueco.radio,CilindroHueco.longitud,CilindroHueco.radio_interior FROM Queso,CilindroHueco WHERE Queso.id_queso = CilindroHueco.id_queso";
+				ResultSet QCH = sql.executeQuery(qchQuery);
+				
+				while(QCH.next()) {
+					String id = QCH.getString(1);
+					String nombre = QCH.getString(2);
+					float precioBase = new Float(QCH.getFloat(3));
+					float precioUnitario = new Float(QCH.getFloat(4));
+					int radio = new Integer(QCH.getInt(5));
+					int longitud = new Integer(QCH.getInt(6));
+					int radioInterno = new Integer(QCH.getInt(7));
+					CilindroHueco qch = new CilindroHueco(id, nombre, precioBase, precioUnitario, radio, longitud, radioInterno);
+					insettarQueso(qch);
+				}
+				
+				String qeQuery ="SELECT Esfera.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, Esfera.radio  FROM Queso,Esfera WHERE Queso.id_queso = Esfera.id_queso";
+				ResultSet QE = sql.executeQuery(qeQuery);
+				
+				while(QE.next()) {
+					String id = QE.getString(1);
+					String nombre = QE.getString(2);
+					float precioBase = new Float(QE.getFloat(3));
+					float precioUnitario = new Float(QE.getFloat(4));
+					int radio = new Integer(QE.getInt(5));
+					Esfera qe = new Esfera(id, nombre, precioBase, precioUnitario, radio);
+					insettarQueso(qe);
+				}
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(null, "Error al cargar los datos de los quesos", "Error", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void loadFactura() {
+		if(database!=null) {
+			String query = "SELECT * FROM Factura";
+			try {
+				Statement sql = database.createStatement();
+				ResultSet f = sql.executeQuery(query);
+				while(f.next()) {
+					String id = f.getString(1);
+					Cliente cliente = buscarClientebyId(f.getString(2));
+					Date fecha = f.getDate(3);
+					String detalleQuery = "SELECT Detalle_Factura.id_queso, Detalle_Factura.cantidad FROM  Factura,Detalle_Factura WHERE Detalle_Factura.id_queso="+"'"+id+"'";
+					ResultSet df = sql.executeQuery(detalleQuery);
+					
+					ArrayList<Queso> listQuesos = new ArrayList();
+					ArrayList<Integer> cantidades = new ArrayList();
+					while(df.next()) {
+					Queso q = findQuesoById(df.getString(1));
+					listQuesos.add(q);
+					Integer i = new Integer(df.getInt(2));
+					cantidades.add(i);
+					}
+					Factura factura = new Factura(id, cliente, listQuesos, cantidades);
+					factura.setFecha(fecha);
+					insertarFactura(factura);
+				}
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(null, "Error al cargar los datos de las facturas", "Error", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private Cliente buscarClientebyId(String id) {
+		for (Cliente c : clientes) {
+			if (c.getId().equalsIgnoreCase(id)) {
+				return c;
+			}
+		}
+		return null;
+	}
+
 	public Integer getPaisbyNombre(String nombre) {
 		Integer id = -1;
 		String query ="SELECT id_pais FROM Pais WHERE nombre LIKE" + "'" + nombre + "'";
+		try {
+			Statement sql = database.createStatement();
+			ResultSet res = sql.executeQuery(query);
+			while(res.next()) {
+				id = res.getInt(1);
+			}
+			return id;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
+	public Integer getCiudadbyNobre(String nombre) {
+		Integer id = -1;
+		String query ="SELECT id_ciudad FROM Ciudad WHERE nombre LIKE" + "'" + nombre + "'";
 		try {
 			Statement sql = database.createStatement();
 			ResultSet res = sql.executeQuery(query);
