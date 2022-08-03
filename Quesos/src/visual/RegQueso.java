@@ -287,14 +287,23 @@ public class RegQueso extends JDialog {
 							float precioBase = new Float(spnPrecioBase.getValue().toString());
 							float precioUnitario = new Float(spnUnitario.getValue().toString());
 							
+							String query = "INSERT INTO Queso VALUES("+"'"+id+"'"+","+"'"+nombre+"'"+","+precioBase+","+precioUnitario+")";
+							try {
+								Statement sql = Empresa.database.createStatement();
+								sql.executeUpdate(query);
+							} catch (SQLException e1) {
+								JOptionPane.showMessageDialog(null, "Error al insertar el queso a la BD", "Error", JOptionPane.ERROR_MESSAGE);
+								e1.printStackTrace();
+							}
+							
 							if (rdbtnEsfera.isSelected()) {
 								int radio = new Integer(spnRadioEsfera.getValue().toString());
 								aux = new Esfera(id, nombre, precioBase, precioUnitario, radio);
 								valido = true;
-								String query = "INSERT INTO Esfera VALUES("+"'"+id+"'"+","+radio+")";
+								String queryE = "INSERT INTO Esfera VALUES("+"'"+id+"'"+","+radio+")";
 								try {
 									Statement sql = Empresa.database.createStatement();
-									sql.executeUpdate(query);
+									sql.executeUpdate(queryE);
 								} catch (SQLException e1) {
 									e1.printStackTrace();
 								}
@@ -305,10 +314,10 @@ public class RegQueso extends JDialog {
 								int longitud = new Integer(spnLongitudCilindro.getValue().toString());
 								aux = new Cilindro(id, nombre, precioBase, precioUnitario, radio, longitud);
 								valido = true;
-								String query = "INSERT INTO Cilindro VALUES("+"'"+id+"'"+","+radio+","+longitud+")";
+								String queryC = "INSERT INTO Cilindro VALUES("+"'"+id+"'"+","+radio+","+longitud+")";
 								try {
 									Statement sql = Empresa.database.createStatement();
-									sql.executeUpdate(query);
+									sql.executeUpdate(queryC);
 								} catch (SQLException e1) {
 									e1.printStackTrace();
 								}
@@ -322,10 +331,10 @@ public class RegQueso extends JDialog {
 								if (radioInterno < radio) {
 									aux = new CilindroHueco(id, nombre, precioBase, precioUnitario, radio, longitud, radioInterno);
 									valido = true;
-									String query = "INSERT INTO CilindroHueco VALUES("+"'"+id+"'"+","+radio+","+radioInterno+")";
+									String queryCH = "INSERT INTO CilindroHueco VALUES("+"'"+id+"'"+","+radio+","+radioInterno+")";
 									try {
 										Statement sql = Empresa.database.createStatement();
-										sql.executeUpdate(query);
+										sql.executeUpdate(queryCH);
 									} catch (SQLException e1) {
 										e1.printStackTrace();
 									}
@@ -334,14 +343,6 @@ public class RegQueso extends JDialog {
 								}
 							}
 							if (valido) {
-								String query = "INSERT INTO Queso VALUES("+"'"+id+"'"+","+"'"+nombre+"'"+","+precioBase+","+precioUnitario+")";
-								try {
-									Statement sql = Empresa.database.createStatement();
-									sql.executeUpdate(query);
-								} catch (SQLException e1) {
-									JOptionPane.showMessageDialog(null, "Error al insertar el queso a la BD", "Error", JOptionPane.ERROR_MESSAGE);
-									e1.printStackTrace();
-								}
 								Empresa.getInstance().insettarQueso(aux);
 								JOptionPane.showMessageDialog(null, "Registrado satisfactoriamente", "Registro de queso", JOptionPane.INFORMATION_MESSAGE);
 								clean();
