@@ -162,8 +162,8 @@ public class Empresa {
 		quesos.remove(q);
 	}
 
-	public void crearFactura(Cliente c, ArrayList<Queso> compra) {
-		Factura f = new Factura("F-" + Factura.codigo, c, compra);
+	public void crearFactura(Cliente c, ArrayList<Queso> compra, ArrayList<Integer> cants) {
+		Factura f = new Factura("F-" + Factura.codigo, c, compra, cants);
 		insertarFactura(f);	
 	}
 	

@@ -72,6 +72,7 @@ public class HacerPedido extends JDialog {
 	private JSpinner spnCantidad;
 	
 	private Hashtable<String, Integer> cantidades;
+	private String selectedProduct;
 	
 	/**
 	  Launch the application.
@@ -250,6 +251,7 @@ public class HacerPedido extends JDialog {
 						
 						String aux = listModelCompra.getElementAt(index);
 						updateCantidad(aux.substring(0, aux.indexOf('|')));
+						selectedProduct = aux.substring(0, aux.indexOf('|'));
 					}
 				}
 			});
@@ -277,6 +279,7 @@ public class HacerPedido extends JDialog {
 						
 						String aux = listModelCompra.getElementAt(index);
 						updateCantidad(aux.substring(0, aux.indexOf('|')));
+						selectedProduct = aux.substring(0, aux.indexOf('|'));
 					}
 				}
 			});
@@ -294,6 +297,8 @@ public class HacerPedido extends JDialog {
 					spnCantidad.setEnabled(false);
 					spnCantidad.setValue(0);
 					
+					selectedProduct = "";
+					
 					updateMonto();
 				}
 			});
@@ -310,6 +315,8 @@ public class HacerPedido extends JDialog {
 					btnIzquierda.setEnabled(false);
 					spnCantidad.setEnabled(false);
 					spnCantidad.setValue(0);
+					
+					selectedProduct = "";
 					
 					updateMonto();
 				}
@@ -332,7 +339,9 @@ public class HacerPedido extends JDialog {
 			spnCantidad = new JSpinner();
 			spnCantidad.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
-					//Update hashtable when value changes
+					if ((Integer) spnCantidad.getValue() > 0) {
+						cantidades.replace(selectedProduct, (Integer) spnCantidad.getValue());
+					}
 				}
 			});
 			spnCantidad.setModel(new SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
