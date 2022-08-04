@@ -134,7 +134,7 @@ public class ListFactura extends JDialog {
 			for (Factura f : Empresa.getInstance().getFacturas()) {
 				
 				rows[0] = f.getId();
-				rows[1] = f.getCliente().getId();
+				rows[1] = f.getCliente().getNombre() + " " + f.getCliente().getApellido();
 				rows[2] = f.getQuesos().size();
 				rows[3] = f.precioTotal();
 						
@@ -144,7 +144,7 @@ public class ListFactura extends JDialog {
 			for (Factura f : Empresa.getInstance().getFacturasOfCliente(cliente.getCedula())) {
 				
 				rows[0] = f.getId();
-				rows[1] = f.getCliente().getId();
+				rows[1] = f.getCliente().getNombre() + " " + f.getCliente().getApellido();
 				rows[2] = f.getQuesos().size();
 				rows[3] = f.precioTotal();
 						

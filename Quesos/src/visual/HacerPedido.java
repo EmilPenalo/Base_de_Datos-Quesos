@@ -77,6 +77,7 @@ public class HacerPedido extends JDialog {
 	
 	private Hashtable<String, Integer> cantidades = new Hashtable<String, Integer>();
 	private String selectedProduct;
+	private JButton btnActualizar;
 	
 	/**
 	  Launch the application.
@@ -126,8 +127,7 @@ public class HacerPedido extends JDialog {
 					selected = Empresa.getInstance().findClienteByCedula(txtCedula.getText());
 					clean();
 					if (selected != null) {
-						Integer pais = Empresa.getInstance().getPaisbyNombre(selected.getPais());
-						loadCuidades(pais);
+						loadCuidades(selected.getPais());
 
 						txtCodigo.setText(selected.getId());
 						txtNombre.setText(selected.getNombre());
@@ -206,7 +206,7 @@ public class HacerPedido extends JDialog {
 					if (cbxPais.getSelectedIndex() != -1) {
 						if (selected == null) {
 							cbxCuidad.setEnabled(true);
-							loadCuidades(cbxPais.getSelectedIndex());
+							loadCuidades(cbxPais.getSelectedItem().toString());
 						}
 					}
 				}
@@ -253,10 +253,11 @@ public class HacerPedido extends JDialog {
 					index = listDisponible.getSelectedIndex();
 					
 					if (index != -1) {
+						
 						btnDerecha.setEnabled(true);
 						spnCantidad.setEnabled(true);
 						
-						String aux = listModelCompra.getElementAt(index);
+						String aux = listModelDisp.getElementAt(index);
 						updateCantidad(aux.substring(0, aux.indexOf('|')));
 						selectedProduct = aux.substring(0, aux.indexOf('|'));
 					}
@@ -281,6 +282,7 @@ public class HacerPedido extends JDialog {
 					index = listCompra.getSelectedIndex();
 					
 					if (index != -1) {
+						
 						btnIzquierda.setEnabled(true);
 						spnCantidad.setEnabled(true);
 						
@@ -303,6 +305,8 @@ public class HacerPedido extends JDialog {
 					btnDerecha.setEnabled(false);
 					spnCantidad.setEnabled(false);
 					spnCantidad.setValue(0);
+					btnActualizar.setEnabled(false);
+
 					
 					selectedProduct = "";
 					
@@ -310,7 +314,7 @@ public class HacerPedido extends JDialog {
 				}
 			});
 			btnDerecha.setEnabled(false);
-			btnDerecha.setBounds(204, 376, 70, 30);
+			btnDerecha.setBounds(204, 410, 70, 30);
 			panel.add(btnDerecha);
 			
 			btnIzquierda = new JButton("<<");
@@ -322,6 +326,7 @@ public class HacerPedido extends JDialog {
 					btnIzquierda.setEnabled(false);
 					spnCantidad.setEnabled(false);
 					spnCantidad.setValue(0);
+					btnActualizar.setEnabled(false);
 					
 					selectedProduct = "";
 					
@@ -329,7 +334,7 @@ public class HacerPedido extends JDialog {
 				}
 			});
 			btnIzquierda.setEnabled(false);
-			btnIzquierda.setBounds(204, 436, 70, 30);
+			btnIzquierda.setBounds(204, 451, 70, 30);
 			panel.add(btnIzquierda);
 			
 			JLabel lblNewLabel_2 = new JLabel("Monto a pagar:");
@@ -344,17 +349,28 @@ public class HacerPedido extends JDialog {
 			panel.add(spnMonto);
 			
 			spnCantidad = new JSpinner();
-			spnCantidad.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					if ((Integer) spnCantidad.getValue() > 0) {
+			spnCantidad.setModel(new SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
+			spnCantidad.setEnabled(false);
+			spnCantidad.setBounds(204, 301, 70, 30);
+			panel.add(spnCantidad);
+			
+			btnActualizar = new JButton("Actualizar");
+			btnActualizar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (selectedProduct != "") {
 						cantidades.replace(selectedProduct, (Integer) spnCantidad.getValue());
+						updateMonto();
 					}
 				}
 			});
-			spnCantidad.setModel(new SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
-			spnCantidad.setEnabled(false);
-			spnCantidad.setBounds(204, 318, 70, 30);
-			panel.add(spnCantidad);
+			btnActualizar.setFont(new Font("Tahoma", Font.PLAIN, 10));
+			btnActualizar.setEnabled(false);
+			btnActualizar.setBounds(195, 342, 88, 30);
+			panel.add(btnActualizar);
+			
+			JLabel lblNewLabel_1_1 = new JLabel("Cantidad:");
+			lblNewLabel_1_1.setBounds(205, 268, 88, 20);
+			panel.add(lblNewLabel_1_1);
 			
 		}
 		{
@@ -437,11 +453,10 @@ public class HacerPedido extends JDialog {
 		
 		txtNombre.setText("");
 		txtApellido.setText("");
-//		cbxPais.setSelectedIndex(0);
-//		cbxCuidad.setSelectedIndex(0);
 		txtCodigo.setText("");
 		txtTelefono.setText("");
 		spnCantidad.setValue(0);
+		spnMonto.setValue(0);
 		
 		spnCantidad.setEnabled(false);
 		txtNombre.setEditable(false);
@@ -449,6 +464,8 @@ public class HacerPedido extends JDialog {
 		txtTelefono.setEditable(false);
 		cbxPais.setEnabled(false);
 		cbxCuidad.setEnabled(false);
+		
+		btnActualizar.setEnabled(false);
 		
 		cantidades.clear();
 		loadDisponibles();
@@ -479,6 +496,7 @@ public class HacerPedido extends JDialog {
 	
 	private void updateCantidad(String id) {
 		spnCantidad.setValue(cantidades.get(id));
+		btnActualizar.setEnabled(true);
 	}
 	
 	private void loadPaises() {
@@ -495,8 +513,7 @@ public class HacerPedido extends JDialog {
 		}
 	}
 	
-	private void loadCuidades(Integer id) {
-		String pais = Empresa.getInstance().getNombrePaisbyId(id);
+	private void loadCuidades(String pais) {
 		String query = "exec sp_obtener_ciudades"+"'"+pais+"'";
 		try {
 			Statement sql = Empresa.database.createStatement();
