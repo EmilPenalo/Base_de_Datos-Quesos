@@ -129,14 +129,11 @@ public class RegCliente extends JDialog {
 			cbxPais = new JComboBox();
 			cbxPais.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (cbxPais.getSelectedIndex() == 0) {
-						cbxCuidad.setEnabled(true);
-					} else {
 						cbxCuidad.setEnabled(true);
 						loadCuidades(cbxPais.getSelectedItem().toString());
 					}
 				}
-			});
+			);
 			cbxPais.setBounds(81, 138, 146, 30);
 			panel.add(cbxPais);
 			
@@ -169,6 +166,7 @@ public class RegCliente extends JDialog {
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if (selected == null) {
+							if(Empresa.getInstance().validarDatosCliente(txtCedula.getText(), txtTelefono.getText())==true) {
 							Cliente c = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(), cbxCuidad.getSelectedItem().toString(), cbxPais.getSelectedItem().toString(), txtApellido.getText());
 							String query = "INSERT INTO Cliente VALUES("+"'"+txtCodigo.getText()+"'"+","+"'"+txtNombre.getText()+"'"+","+"'"+txtApellido.getText()+"'"+","+"'"+txtCedula.getText()+"'"+","+Empresa.getInstance().getCiudadbyNobre(cbxCuidad.getSelectedItem().toString())+","+"'"+txtTelefono.getText()+"'"+")";
 							try {
@@ -181,6 +179,9 @@ public class RegCliente extends JDialog {
 							Empresa.getInstance().insertarCliente(c);
 							JOptionPane.showMessageDialog(null, "Registrado satisfactoriamente", "Registro de cliente", JOptionPane.INFORMATION_MESSAGE);
 							clean();
+							}else {
+								JOptionPane.showMessageDialog(null, "Cedula o numero de telefono invalidos", "Error", JOptionPane.ERROR_MESSAGE);
+							}
 						} else {
 							selected.setCedula(txtCedula.getText());
 							selected.setNombre(txtNombre.getText());

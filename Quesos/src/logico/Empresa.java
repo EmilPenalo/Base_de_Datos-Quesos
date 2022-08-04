@@ -347,20 +347,34 @@ public class Empresa {
 		}
 		return -1;
 	}
-
-	public String getNombrePaisbyId(Integer id) {
-		String nombre = "";
-		String query ="SELECT nombre FROM Pais WHERE id_pais = " + id.toString();
+	
+	public boolean validarDatosCliente(String cedula,String telefono) {
+		String query1 = "SELECT dbo.validar_cedula"+"("+"'"+cedula+"'"+")";
+		String  query2 = "SELECT dbo.validar_telefono"+"("+"'"+telefono+"'"+")";
+		boolean b1= false, b2 =false;
 		try {
 			Statement sql = database.createStatement();
-			ResultSet res = sql.executeQuery(query);
-			while(res.next()) {
-				nombre = res.getString("nombre");
+			ResultSet s1 = sql.executeQuery(query1);
+			while(s1.next()) {
+				if(s1.getBoolean(1)==true) {
+				b1 = true;
+				}
 			}
-			return nombre;
+			
+			ResultSet s2 = sql.executeQuery(query2);
+			while(s2.next()) {
+				if(s2.getBoolean(1)==true) {
+					b2 = true;
+				}
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
-		return null;
+		if(b1==true && b2==true) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 }
