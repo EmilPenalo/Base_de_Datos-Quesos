@@ -330,22 +330,22 @@ public class Empresa {
 					id = f.getString(1);
 					cliente = buscarClientebyId(f.getString(2));
 					fecha = f.getDate(3);
-				
-					String detalleQuery = "SELECT id_queso, cantidad FROM Detalle_Factura WHERE Detalle_Factura.id_factura="+"'"+id+"'";
-					ResultSet df = sql.executeQuery(detalleQuery);
-					ArrayList<Queso> listQuesos = new ArrayList<Queso>();
-					Hashtable<String, Integer> cantidades = new Hashtable<String, Integer>();
 					
-					while(df.next()) {
-						Queso q = findQuesoById(df.getString(1));
-						listQuesos.add(q);
-						Integer i = new Integer(df.getInt(2));
-						cantidades.put(q.getId().toString(), i);
-					}
-					
-					Factura factura = new Factura(id, cliente, listQuesos, cantidades);
+					Factura factura = new Factura(id, cliente, null, null);
 					factura.setFecha(fecha);
 					insertarFactura(factura);
+				}
+				
+				String detalleQuery = "SELECT id_factura, id_queso, cantidad FROM Detalle_Factura WHERE Detalle_Factura.id_factura="+"'"+id+"'";
+				ResultSet df = sql.executeQuery(detalleQuery);
+				ArrayList<Queso> listQuesos = new ArrayList<Queso>();
+				Hashtable<String, Integer> cantidades = new Hashtable<String, Integer>();
+				
+				while(df.next()) {
+					Queso q = findQuesoById(df.getString(1));
+					listQuesos.add(q);
+					Integer i = new Integer(df.getInt(2));
+					cantidades.put(q.getId().toString(), i);
 				}
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(null, "Error al cargar los datos de las facturas", "Error", JOptionPane.ERROR_MESSAGE);
