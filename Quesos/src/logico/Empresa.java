@@ -307,28 +307,31 @@ public class Empresa {
 	public void loadFactura() {
 		if(database!=null) {
 			String query = "SELECT * FROM Factura";
+			String id = "-1";
+			Cliente cliente = null;
+			Date fecha = null;
 			try {
 				Statement sql = database.createStatement();
 				ResultSet f = sql.executeQuery(query);
 				while(f.next()) {
-					String id = f.getString(1);
-					Cliente cliente = buscarClientebyId(f.getString(2));
-					Date fecha = f.getDate(3);
-					String detalleQuery = "SELECT Detalle_Factura.id_queso, Detalle_Factura.cantidad FROM  Factura,Detalle_Factura WHERE Detalle_Factura.id_queso="+"'"+id+"'";
-					ResultSet df = sql.executeQuery(detalleQuery);
-					
-					ArrayList<Queso> listQuesos = new ArrayList<Queso>();
-					Hashtable<String, Integer> cantidades = new Hashtable<String, Integer>();
-					while(df.next()) {
-					Queso q = findQuesoById(df.getString(1));
-					listQuesos.add(q);
-					Integer i = new Integer(df.getInt(2));
-					cantidades.put(q.getId().toString(), i);
+					 id = f.getString(1);
+					 cliente = buscarClientebyId(f.getString(2));
+					 fecha = f.getDate(3);
 					}
-					Factura factura = new Factura(id, cliente, listQuesos, cantidades);
-					factura.setFecha(fecha);
-					insertarFactura(factura);
+				
+				String detalleQuery = "SELECT Detalle_Factura.id_queso, Detalle_Factura.cantidad FROM  Factura,Detalle_Factura WHERE Detalle_Factura.id_queso="+"'"+id+"'";
+				ResultSet df = sql.executeQuery(detalleQuery);
+				ArrayList<Queso> listQuesos = new ArrayList<Queso>();
+				Hashtable<String, Integer> cantidades = new Hashtable<String, Integer>();
+				while(df.next()) {
+				Queso q = findQuesoById(df.getString(1));
+				listQuesos.add(q);
+				Integer i = new Integer(df.getInt(2));
+				cantidades.put(q.getId().toString(), i);
 				}
+				Factura factura = new Factura(id, cliente, listQuesos, cantidades);
+				factura.setFecha(fecha);
+				insertarFactura(factura);
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(null, "Error al cargar los datos de las facturas", "Error", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
