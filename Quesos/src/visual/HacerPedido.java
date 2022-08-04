@@ -35,6 +35,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
@@ -470,5 +473,33 @@ public class HacerPedido extends JDialog {
 	
 	private void updateCantidad(String id) {
 		spnCantidad.setValue(cantidades.get(id));
+	}
+	
+	private void loadPaises() {
+		String query = "exec sp_obtener_paises";
+		try {
+			Statement sql = Empresa.database.createStatement();
+			ResultSet p = sql.executeQuery(query);
+			
+			while(p.next()) {
+				cbxPais.addItem(p.getString(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadCuidades(String pais) {
+		String query = "exec sp_obtener_ciudades"+"'"+pais+"'";
+		try {
+			Statement sql = Empresa.database.createStatement();
+			ResultSet c = sql.executeQuery(query);
+			cbxCuidad.removeAllItems();
+			while(c.next()) {
+				cbxCuidad.addItem(c.getString(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -9,6 +9,9 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -127,15 +130,13 @@ public class RegCliente extends JDialog {
 			cbxPais.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (cbxPais.getSelectedIndex() == 0) {
-						cbxCuidad.setEnabled(false);
-						cbxCuidad.setSelectedIndex(0);
+						cbxCuidad.setEnabled(true);
 					} else {
 						cbxCuidad.setEnabled(true);
-						loadCuidades(cbxPais.getSelectedIndex());
+						loadCuidades(cbxPais.getSelectedItem().toString());
 					}
 				}
 			});
-			loadPaises();
 			cbxPais.setBounds(81, 138, 146, 30);
 			panel.add(cbxPais);
 			
@@ -169,6 +170,14 @@ public class RegCliente extends JDialog {
 					public void actionPerformed(ActionEvent e) {
 						if (selected == null) {
 							Cliente c = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(), cbxCuidad.getSelectedItem().toString(), cbxPais.getSelectedItem().toString(), txtApellido.getText());
+							String query = "INSERT INTO Cliente VALUES("+"'"+txtCodigo.getText()+"'"+","+"'"+txtNombre.getText()+"'"+","+"'"+txtApellido.getText()+"'"+","+"'"+txtCedula.getText()+"'"+","+Empresa.getInstance().getCiudadbyNobre(cbxCuidad.getSelectedItem().toString())+","+"'"+txtTelefono.getText()+"'"+")";
+							try {
+								Statement sql = Empresa.database.createStatement();
+								sql.executeUpdate(query);
+							} catch (SQLException e1) {
+								JOptionPane.showMessageDialog(null, "Error al insertar el cliente a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+								e1.printStackTrace();
+							}
 							Empresa.getInstance().insertarCliente(c);
 							JOptionPane.showMessageDialog(null, "Registrado satisfactoriamente", "Registro de cliente", JOptionPane.INFORMATION_MESSAGE);
 							clean();
@@ -199,26 +208,43 @@ public class RegCliente extends JDialog {
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
+			loadPaises();
 			loadCliente();
 		}
 	}
 	
-// General call should be moved to Empresa for it to be used in HacerPedido as well
 	private void loadPaises() {
-//		Call DataBase and set Model to the available countries
-//		Do we need to be able to add more countries?
-		cbxPais.setModel(new DefaultComboBoxModel(new String[] {"<Seleccione>", "Esfera", "Cilindro", "Cilindro Hueco"}));
+		String query = "exec sp_obtener_paises";
+		try {
+			Statement sql = Empresa.database.createStatement();
+			ResultSet p = sql.executeQuery(query);
+			
+			while(p.next()) {
+				cbxPais.addItem(p.getString(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	private void loadCuidades(Integer pais) {
-//		Same as loadPaises()
-		cbxCuidad.setModel(new DefaultComboBoxModel(new String[] {"<Seleccione>", "Esfera" + pais.toString(), "Cilindro", "Cilindro Hueco"}));
+	private void loadCuidades(String pais) {
+		String query = "exec sp_obtener_ciudades"+"'"+pais+"'";
+		try {
+			Statement sql = Empresa.database.createStatement();
+			ResultSet c = sql.executeQuery(query);
+			cbxCuidad.removeAllItems();
+			while(c.next()) {
+				cbxCuidad.addItem(c.getString(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void loadCliente() {
 		if (selected != null) {
 			Integer pais = Empresa.getInstance().getPaisbyNombre(selected.getPais());
-			loadCuidades(pais);
+			loadCuidades(selected.getPais());
 
 			txtCedula.setText(selected.getCedula());
 			txtNombre.setText(selected.getNombre());

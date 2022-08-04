@@ -105,6 +105,16 @@ public class Principal extends JFrame {
 				listc.setVisible(true);
 			}
 		});
+		
+		JMenuItem mntmNewMenuItem_5 = new JMenuItem("Registrar");
+		mntmNewMenuItem_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				RegCliente regc = new RegCliente(null);
+				regc.setModal(true);
+				regc.setVisible(true);
+			}
+		});
+		mnClientes.add(mntmNewMenuItem_5);
 		mnClientes.add(mntmNewMenuItem);
 		
 		JMenu mnQuesos = new JMenu("Quesos");
