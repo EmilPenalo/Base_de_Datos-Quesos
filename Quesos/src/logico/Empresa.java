@@ -4,12 +4,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
+//import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Hashtable;
 
 import javax.naming.spi.DirStateFactory.Result;
 import javax.swing.JOptionPane;
@@ -103,6 +108,30 @@ public class Empresa {
 	
 	public void insertarFactura(Factura f) {
 		facturas.add(f);
+		  
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");  
+		String strFecha = dateFormat.format(f.getFecha());  
+		
+		String query = "INSERT INTO Factura VALUES("+"'"+f.getId()+"'"+",'"+f.getCliente().getId()+"'"+","+strFecha+")";
+		try {
+			Statement sql = Empresa.database.createStatement();
+			sql.executeUpdate(query);
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "Error al insertar el queso a la BD", "Error", JOptionPane.ERROR_MESSAGE);
+			e1.printStackTrace();
+		}
+		
+		//Agregando Quesos a detalle_factura
+		for (Queso q : f.getQuesos()) {
+			query = "INSERT INTO Detalle_Factura VALUES("+"'"+f.getId()+"'"+",'"+q.getId()+"'"+","+f.getCantidades().get(q.getId().toString())+")";
+			try {
+				Statement sql = Empresa.database.createStatement();
+				sql.executeUpdate(query);
+			} catch (SQLException e1) {
+				JOptionPane.showMessageDialog(null, "Error al insertar el queso a la BD", "Error", JOptionPane.ERROR_MESSAGE);
+				e1.printStackTrace();
+			}
+		}
 	}
 	
 	public void insettarQueso(Queso q) {
@@ -162,7 +191,7 @@ public class Empresa {
 		quesos.remove(q);
 	}
 
-	public void crearFactura(Cliente c, ArrayList<Queso> compra, ArrayList<Integer> cants) {
+	public void crearFactura(Cliente c, ArrayList<Queso> compra, Hashtable<String, Integer> cants) {
 		Factura f = new Factura("F-" + Factura.codigo, c, compra, cants);
 		insertarFactura(f);	
 	}
@@ -288,13 +317,13 @@ public class Empresa {
 					String detalleQuery = "SELECT Detalle_Factura.id_queso, Detalle_Factura.cantidad FROM  Factura,Detalle_Factura WHERE Detalle_Factura.id_queso="+"'"+id+"'";
 					ResultSet df = sql.executeQuery(detalleQuery);
 					
-					ArrayList<Queso> listQuesos = new ArrayList();
-					ArrayList<Integer> cantidades = new ArrayList();
+					ArrayList<Queso> listQuesos = new ArrayList<Queso>();
+					Hashtable<String, Integer> cantidades = new Hashtable<String, Integer>();
 					while(df.next()) {
 					Queso q = findQuesoById(df.getString(1));
 					listQuesos.add(q);
 					Integer i = new Integer(df.getInt(2));
-					cantidades.add(i);
+					cantidades.put(q.getId().toString(), i);
 					}
 					Factura factura = new Factura(id, cliente, listQuesos, cantidades);
 					factura.setFecha(fecha);

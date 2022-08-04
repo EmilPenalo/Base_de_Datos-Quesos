@@ -299,6 +299,9 @@ public class HacerPedido extends JDialog {
 			btnDerecha = new JButton(">>");
 			btnDerecha.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+
+					cantidades.replace(selectedProduct, (Integer) spnCantidad.getValue());
+					
 					String aux = listDisponible.getSelectedValue().toString();
 					listModelCompra.addElement(aux);
 					listModelDisp.remove(listDisponible.getSelectedIndex());
@@ -320,6 +323,9 @@ public class HacerPedido extends JDialog {
 			btnIzquierda = new JButton("<<");
 			btnIzquierda.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					
+					cantidades.replace(selectedProduct, (Integer) spnCantidad.getValue());
+					
 					String aux = listCompra.getSelectedValue().toString();
 					listModelDisp.addElement(aux);
 					listModelCompra.remove(listCompra.getSelectedIndex());
@@ -390,17 +396,15 @@ public class HacerPedido extends JDialog {
 									Empresa.getInstance().insertarCliente(selected);
 								}
 								ArrayList<Queso> compra = new ArrayList<>();
-								ArrayList<Integer> cantsCompra = new ArrayList<>();
 								for (int i = 0; i < listModelCompra.size(); i++) {
 									String aux = listModelCompra.getElementAt(i);
 									String id = aux.substring(0, aux.indexOf('|'));
 									
 									Queso temp = Empresa.getInstance().findQuesoById(id);
 									compra.add(temp);
-									cantsCompra.add(cantidades.get(id));
 									
 								}
-								Empresa.getInstance().crearFactura(selected, compra, cantsCompra);
+								Empresa.getInstance().crearFactura(selected, compra, cantidades);
 								
 								JOptionPane.showMessageDialog(null, "Operacion Satisfactoria", "Informacion", JOptionPane.INFORMATION_MESSAGE);
 								txtCedula.setText("");

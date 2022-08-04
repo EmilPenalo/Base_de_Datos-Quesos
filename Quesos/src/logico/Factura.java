@@ -4,17 +4,18 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 
 public class Factura {
 
 	private String id;
 	private Date fecha;
 	private Cliente cliente;
-	private ArrayList<Integer> cantidades;
+	private Hashtable<String, Integer> cantidades;
 	private ArrayList<Queso> quesos;
 	public static int codigo = 1;
 	
-	public Factura(String id, Cliente cliente, ArrayList<Queso> quesos, ArrayList<Integer> cantidades) {
+	public Factura(String id, Cliente cliente, ArrayList<Queso> quesos, Hashtable<String, Integer> cantidades) {
 		super();
 		this.id = id;
 		this.fecha = new Date();
@@ -24,11 +25,11 @@ public class Factura {
 		Factura.codigo++;
 	}
 	
-	public ArrayList<Integer> getCantidades() {
+	public Hashtable<String, Integer> getCantidades() {
 		return cantidades;
 	}
 	
-	public void setCantidades(ArrayList<Integer> cantidades) {
+	public void setCantidades(Hashtable<String, Integer> cantidades) {
 		this.cantidades = cantidades;
 	}
 
