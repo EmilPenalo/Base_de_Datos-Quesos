@@ -135,7 +135,7 @@ public class ListFactura extends JDialog {
 				
 				rows[0] = f.getId();
 				rows[1] = f.getCliente().getNombre() + " " + f.getCliente().getApellido();
-				rows[2] = f.getQuesos().size();
+				rows[2] = f.cantQuesos();
 				rows[3] = f.precioTotal();
 						
 				model.addRow(rows);
@@ -145,7 +145,7 @@ public class ListFactura extends JDialog {
 				
 				rows[0] = f.getId();
 				rows[1] = f.getCliente().getNombre() + " " + f.getCliente().getApellido();
-				rows[2] = f.getQuesos().size();
+				rows[2] = f.cantQuesos();
 				rows[3] = f.precioTotal();
 						
 				model.addRow(rows);

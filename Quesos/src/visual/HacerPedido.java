@@ -18,6 +18,7 @@ import logico.CilindroHueco;
 import logico.Cliente;
 import logico.Empresa;
 import logico.Esfera;
+import logico.Factura;
 import logico.Queso;
 
 import javax.swing.JLabel;
@@ -404,7 +405,9 @@ public class HacerPedido extends JDialog {
 									compra.add(temp);
 									
 								}
-								Empresa.getInstance().crearFactura(selected, compra, cantidades);
+								Factura f = Empresa.getInstance().crearFactura(selected, compra, cantidades);
+								Empresa.getInstance().insertBdFactura(f);
+								Empresa.getInstance().insertarFactura(f);
 								
 								JOptionPane.showMessageDialog(null, "Operacion Satisfactoria", "Informacion", JOptionPane.INFORMATION_MESSAGE);
 								txtCedula.setText("");

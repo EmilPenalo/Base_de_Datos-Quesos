@@ -68,9 +68,17 @@ public class Factura {
 	public float precioTotal() {
 		float precio = 0;
 		for (Queso q : quesos) {
-			precio += q.precio();
+			precio += q.precio()*cantidades.get(q.getId().toString());
 		}
 		return precio;
+	}
+	
+	public Integer cantQuesos() {
+		Integer cant = 0;
+		for (Integer i : cantidades.values()) {
+			cant += i;
+		}
+		return cant;
 	}
 	
 	public String toText() {

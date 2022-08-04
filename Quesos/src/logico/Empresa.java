@@ -108,7 +108,9 @@ public class Empresa {
 	
 	public void insertarFactura(Factura f) {
 		facturas.add(f);
-		  
+	}
+	
+	public Boolean insertBdFactura(Factura f) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");  
 		String strFecha = dateFormat.format(f.getFecha());  
 		
@@ -116,21 +118,19 @@ public class Empresa {
 		try {
 			Statement sql = Empresa.database.createStatement();
 			sql.executeUpdate(query);
+			
+			//Agregando Quesos a detalle_factura
+			for (Queso q : f.getQuesos()) {
+				query = "INSERT INTO Detalle_Factura VALUES("+"'"+f.getId()+"'"+",'"+q.getId()+"'"+","+f.getCantidades().get(q.getId().toString())+")";
+				
+				sql = Empresa.database.createStatement();
+				sql.executeUpdate(query);
+			}
+			return true;
 		} catch (SQLException e1) {
 			JOptionPane.showMessageDialog(null, "Error al insertar el queso a la BD", "Error", JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();
-		}
-		
-		//Agregando Quesos a detalle_factura
-		for (Queso q : f.getQuesos()) {
-			query = "INSERT INTO Detalle_Factura VALUES("+"'"+f.getId()+"'"+",'"+q.getId()+"'"+","+f.getCantidades().get(q.getId().toString())+")";
-			try {
-				Statement sql = Empresa.database.createStatement();
-				sql.executeUpdate(query);
-			} catch (SQLException e1) {
-				JOptionPane.showMessageDialog(null, "Error al insertar el queso a la BD", "Error", JOptionPane.ERROR_MESSAGE);
-				e1.printStackTrace();
-			}
+			return false;
 		}
 	}
 	
@@ -191,9 +191,9 @@ public class Empresa {
 		quesos.remove(q);
 	}
 
-	public void crearFactura(Cliente c, ArrayList<Queso> compra, Hashtable<String, Integer> cants) {
-		Factura f = new Factura("F-" + Factura.codigo, c, compra, cants);
-		insertarFactura(f);	
+	public Factura crearFactura(Cliente c, ArrayList<Queso> compra, Hashtable<String, Integer> cants) {
+		Factura f = new Factura("F-" + Factura.codigo, c, compra, cants);	
+		return f;
 	}
 	
 	public ArrayList<Factura> getFacturasOfCliente(String cedula) {
