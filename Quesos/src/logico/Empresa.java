@@ -319,7 +319,7 @@ public class Empresa {
 					 fecha = f.getDate(3);
 					}
 				
-				String detalleQuery = "SELECT Detalle_Factura.id_queso, Detalle_Factura.cantidad FROM  Factura,Detalle_Factura WHERE Detalle_Factura.id_queso="+"'"+id+"'";
+				String detalleQuery = "SELECT Detalle_Factura.id_queso, Detalle_Factura.cantidad FROM Detalle_Factura WHERE Detalle_Factura.id_factura="+"'"+id+"'";
 				ResultSet df = sql.executeQuery(detalleQuery);
 				ArrayList<Queso> listQuesos = new ArrayList<Queso>();
 				Hashtable<String, Integer> cantidades = new Hashtable<String, Integer>();

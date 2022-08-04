@@ -172,11 +172,11 @@ public class RegCliente extends JDialog {
 							try {
 								Statement sql = Empresa.database.createStatement();
 								sql.executeUpdate(query);
+								Empresa.getInstance().insertarCliente(c);
 							} catch (SQLException e1) {
 								JOptionPane.showMessageDialog(null, "Error al insertar el cliente a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
 								e1.printStackTrace();
 							}
-							Empresa.getInstance().insertarCliente(c);
 							JOptionPane.showMessageDialog(null, "Registrado satisfactoriamente", "Registro de cliente", JOptionPane.INFORMATION_MESSAGE);
 							clean();
 							}else {
