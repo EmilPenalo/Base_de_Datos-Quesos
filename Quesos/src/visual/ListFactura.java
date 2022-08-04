@@ -54,7 +54,7 @@ public class ListFactura extends JDialog {
 		cliente = clienteDado;
 		
 		setTitle("Listado de Facturas");
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 600, 351);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
@@ -70,7 +70,7 @@ public class ListFactura extends JDialog {
 				JScrollPane scrollPane = new JScrollPane();
 				panel.add(scrollPane, BorderLayout.CENTER);
 				{
-					String headers[] = {"Codigo", "Cliente", "Quesos", "Monto"};
+					String headers[] = {"Codigo", "Cliente", "Quesos", "Monto", "Fecha"};
 					model = new DefaultTableModel();
 					model.setColumnIdentifiers(headers);
 					table = new JTable();
@@ -137,6 +137,7 @@ public class ListFactura extends JDialog {
 				rows[1] = f.getCliente().getNombre() + " " + f.getCliente().getApellido();
 				rows[2] = f.cantQuesos();
 				rows[3] = f.precioTotal();
+				rows[4] = f.getFecha();
 						
 				model.addRow(rows);
 			}
@@ -147,6 +148,7 @@ public class ListFactura extends JDialog {
 				rows[1] = f.getCliente().getNombre() + " " + f.getCliente().getApellido();
 				rows[2] = f.cantQuesos();
 				rows[3] = f.precioTotal();
+				rows[4] = f.getFecha();
 						
 				model.addRow(rows);
 			}

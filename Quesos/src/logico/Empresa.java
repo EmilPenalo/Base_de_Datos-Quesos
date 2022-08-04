@@ -111,10 +111,11 @@ public class Empresa {
 	}
 	
 	public Boolean insertBdFactura(Factura f) {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");  
-		String strFecha = dateFormat.format(f.getFecha());  
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");  
+		String strFecha = dateFormat.format(f.getFecha());
+		System.out.println(strFecha);
 		
-		String query = "INSERT INTO Factura VALUES("+"'"+f.getId()+"'"+",'"+f.getCliente().getId()+"'"+","+strFecha+")";
+		String query = "INSERT INTO Factura VALUES("+"'"+f.getId()+"'"+",'"+f.getCliente().getId()+"'"+","+"'"+strFecha+"'"+")";
 		try {
 			Statement sql = Empresa.database.createStatement();
 			sql.executeUpdate(query);

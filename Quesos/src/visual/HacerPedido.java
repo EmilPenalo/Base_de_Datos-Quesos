@@ -406,8 +406,9 @@ public class HacerPedido extends JDialog {
 									
 								}
 								Factura f = Empresa.getInstance().crearFactura(selected, compra, cantidades);
-								Empresa.getInstance().insertBdFactura(f);
-								Empresa.getInstance().insertarFactura(f);
+								if (Empresa.getInstance().insertBdFactura(f)) {
+									Empresa.getInstance().insertarFactura(f);
+								}
 								
 								JOptionPane.showMessageDialog(null, "Operacion Satisfactoria", "Informacion", JOptionPane.INFORMATION_MESSAGE);
 								txtCedula.setText("");
