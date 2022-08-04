@@ -3,6 +3,7 @@ package visual;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -74,7 +75,7 @@ public class HacerPedido extends JDialog {
 	private JTextField txtApellido;
 	private JSpinner spnCantidad;
 	
-	private Hashtable<String, Integer> cantidades;
+	private Hashtable<String, Integer> cantidades = new Hashtable<String, Integer>();
 	private String selectedProduct;
 	
 	/**
@@ -126,14 +127,16 @@ public class HacerPedido extends JDialog {
 					clean();
 					if (selected != null) {
 						Integer pais = Empresa.getInstance().getPaisbyNombre(selected.getPais());
-//						loadCuidades(pais);
+						loadCuidades(pais);
 
 						txtCodigo.setText(selected.getId());
 						txtNombre.setText(selected.getNombre());
 						txtApellido.setText(selected.getApellido());
-						cbxPais.setSelectedIndex(pais);
+						cbxPais.setSelectedItem(selected.getPais());
 						cbxCuidad.setSelectedItem(selected.getCuidad());
 						txtTelefono.setText(selected.getTelefono());
+						
+						cbxCuidad.setEnabled(false);
 					} else {
 						txtCodigo.setText("C-" + Cliente.codigo);
 						txtNombre.setEditable(true);
@@ -183,6 +186,16 @@ public class HacerPedido extends JDialog {
 			txtTelefono.setBounds(81, 139, 357, 30);
 			panel_1.add(txtTelefono);
 			
+			JLabel lblCuidad = new JLabel("Cuidad:");
+			lblCuidad.setBounds(237, 106, 49, 14);
+			panel_1.add(lblCuidad);
+			
+			cbxCuidad = new JComboBox<String>();
+			cbxCuidad.setEnabled(false);
+			cbxCuidad.setBounds(292, 98, 146, 30);
+			panel_1.add(cbxCuidad);
+			cbxCuidad.setModel(new DefaultComboBoxModel(new String[] {"<Seleccione>"}));
+			
 			JLabel lblPais = new JLabel("Pais:");
 			lblPais.setBounds(15, 103, 49, 20);
 			panel_1.add(lblPais);
@@ -190,28 +203,19 @@ public class HacerPedido extends JDialog {
 			cbxPais = new JComboBox();
 			cbxPais.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (cbxPais.getSelectedIndex() == 0) {
-						cbxCuidad.setEnabled(false);
-						cbxCuidad.setSelectedIndex(0);
-					} else {
-						cbxCuidad.setEnabled(true);
-//						loadCuidades(cbxPais.getSelectedIndex());
+					if (cbxPais.getSelectedIndex() != -1) {
+						if (selected == null) {
+							cbxCuidad.setEnabled(true);
+							loadCuidades(cbxPais.getSelectedIndex());
+						}
 					}
 				}
 			});
-			cbxPais.setEnabled(false);
-//			loadPaises();
 			cbxPais.setBounds(81, 99, 146, 30);
 			panel_1.add(cbxPais);
-			
-			JLabel lblCuidad = new JLabel("Cuidad:");
-			lblCuidad.setBounds(237, 106, 49, 14);
-			panel_1.add(lblCuidad);
-			
-			cbxCuidad = new JComboBox();
-			cbxCuidad.setEnabled(false);
-			cbxCuidad.setBounds(292, 98, 146, 30);
-			panel_1.add(cbxCuidad);
+			cbxPais.setModel(new DefaultComboBoxModel(new String[] {"<Seleccione>"}));
+			cbxPais.setEnabled(false);
+			loadPaises();
 			
 			JLabel lblApellido = new JLabel("Apellido:");
 			lblApellido.setBounds(237, 62, 69, 20);
@@ -433,8 +437,8 @@ public class HacerPedido extends JDialog {
 		
 		txtNombre.setText("");
 		txtApellido.setText("");
-		cbxPais.setSelectedIndex(0);
-		cbxCuidad.setSelectedIndex(0);
+//		cbxPais.setSelectedIndex(0);
+//		cbxCuidad.setSelectedIndex(0);
 		txtCodigo.setText("");
 		txtTelefono.setText("");
 		spnCantidad.setValue(0);
@@ -453,20 +457,22 @@ public class HacerPedido extends JDialog {
 	private void loadDisponibles() {
 		listModelDisp.removeAllElements();
 		for (Queso q : Empresa.getInstance().getQuesos()) {
-			String aux = new String(q.getId());
-			cantidades.put(aux, 0);
-			
-			if (q instanceof Esfera) {
-				aux += "|Esfera";
+			if (q != null) {
+				String aux = new String(q.getId());
+				cantidades.put(aux, (Integer)0);
+				
+				if (q instanceof Esfera) {
+					aux += "|Esfera";
+				}
+				if (q instanceof Cilindro) {
+					aux += "|Cilindro";
+				}
+				if (q instanceof CilindroHueco) {
+					aux += " Hueco";
+				}
+				aux += "|" + q.getNombre();
+				listModelDisp.addElement(aux);
 			}
-			if (q instanceof Cilindro) {
-				aux += "|Cilindro";
-			}
-			if (q instanceof CilindroHueco) {
-				aux += " Hueco";
-			}
-			aux += "|" + q.getNombre();
-			listModelDisp.addElement(aux);
 		}
 			
 	}
@@ -489,7 +495,8 @@ public class HacerPedido extends JDialog {
 		}
 	}
 	
-	private void loadCuidades(String pais) {
+	private void loadCuidades(Integer id) {
+		String pais = Empresa.getInstance().getNombrePaisbyId(id);
 		String query = "exec sp_obtener_ciudades"+"'"+pais+"'";
 		try {
 			Statement sql = Empresa.database.createStatement();

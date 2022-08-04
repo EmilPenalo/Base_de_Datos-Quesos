@@ -347,4 +347,20 @@ public class Empresa {
 		}
 		return -1;
 	}
+
+	public String getNombrePaisbyId(Integer id) {
+		String nombre = "";
+		String query ="SELECT nombre FROM Pais WHERE id_pais = " + id.toString();
+		try {
+			Statement sql = database.createStatement();
+			ResultSet res = sql.executeQuery(query);
+			while(res.next()) {
+				nombre = res.getString("nombre");
+			}
+			return nombre;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
