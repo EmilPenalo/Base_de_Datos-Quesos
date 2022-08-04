@@ -110,10 +110,22 @@ public class Empresa {
 		facturas.add(f);
 	}
 	
+	public Boolean insertBdCliente(Cliente c) {
+		String query = "INSERT INTO Cliente VALUES("+"'"+c.getId()+"'"+","+"'"+c.getNombre()+"'"+","+"'"+c.getApellido()+"'"+","+"'"+c.getCedula()+"'"+","+getCiudadbyNombre(c.getCuidad())+","+"'"+c.getTelefono()+"'"+")";
+		try {
+			Statement sql = Empresa.database.createStatement();
+			sql.executeUpdate(query);
+			return true;
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "Error al insertar el cliente a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+			e1.printStackTrace();
+			return false;
+		}
+	}
+	
 	public Boolean insertBdFactura(Factura f) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");  
 		String strFecha = dateFormat.format(f.getFecha());
-		System.out.println(strFecha);
 		
 		String query = "INSERT INTO Factura VALUES("+"'"+f.getId()+"'"+",'"+f.getCliente().getId()+"'"+","+"'"+strFecha+"'"+")";
 		try {
@@ -135,7 +147,7 @@ public class Empresa {
 		}
 	}
 	
-	public void insettarQueso(Queso q) {
+	public void insertarQueso(Queso q) {
 		quesos.add(q);
 	}
 	
@@ -269,7 +281,7 @@ public class Empresa {
 					int radio = new Integer(QC.getInt(5));
 					int longitud = new Integer(QC.getInt(6));
 					Cilindro qc = new Cilindro(id, nombre, precioBase, precioUnitario, radio, longitud);
-					insettarQueso(qc);
+					insertarQueso(qc);
 				}
 				String qchQuery ="SELECT CilindroHueco.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, CilindroHueco.radio,CilindroHueco.longitud,CilindroHueco.radio_interior FROM Queso,CilindroHueco WHERE Queso.id_queso = CilindroHueco.id_queso";
 				ResultSet QCH = sql.executeQuery(qchQuery);
@@ -283,7 +295,7 @@ public class Empresa {
 					int longitud = new Integer(QCH.getInt(6));
 					int radioInterno = new Integer(QCH.getInt(7));
 					CilindroHueco qch = new CilindroHueco(id, nombre, precioBase, precioUnitario, radio, longitud, radioInterno);
-					insettarQueso(qch);
+					insertarQueso(qch);
 				}
 				
 				String qeQuery ="SELECT Esfera.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, Esfera.radio  FROM Queso,Esfera WHERE Queso.id_queso = Esfera.id_queso";
@@ -296,7 +308,7 @@ public class Empresa {
 					float precioUnitario = new Float(QE.getFloat(4));
 					int radio = new Integer(QE.getInt(5));
 					Esfera qe = new Esfera(id, nombre, precioBase, precioUnitario, radio);
-					insettarQueso(qe);
+					insertarQueso(qe);
 				}
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(null, "Error al cargar los datos de los quesos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -315,24 +327,26 @@ public class Empresa {
 				Statement sql = database.createStatement();
 				ResultSet f = sql.executeQuery(query);
 				while(f.next()) {
-					 id = f.getString(1);
-					 cliente = buscarClientebyId(f.getString(2));
-					 fecha = f.getDate(3);
-					}
+					id = f.getString(1);
+					cliente = buscarClientebyId(f.getString(2));
+					fecha = f.getDate(3);
 				
-				String detalleQuery = "SELECT Detalle_Factura.id_queso, Detalle_Factura.cantidad FROM Detalle_Factura WHERE Detalle_Factura.id_factura="+"'"+id+"'";
-				ResultSet df = sql.executeQuery(detalleQuery);
-				ArrayList<Queso> listQuesos = new ArrayList<Queso>();
-				Hashtable<String, Integer> cantidades = new Hashtable<String, Integer>();
-				while(df.next()) {
-				Queso q = findQuesoById(df.getString(1));
-				listQuesos.add(q);
-				Integer i = new Integer(df.getInt(2));
-				cantidades.put(q.getId().toString(), i);
+					String detalleQuery = "SELECT id_queso, cantidad FROM Detalle_Factura WHERE Detalle_Factura.id_factura="+"'"+id+"'";
+					ResultSet df = sql.executeQuery(detalleQuery);
+					ArrayList<Queso> listQuesos = new ArrayList<Queso>();
+					Hashtable<String, Integer> cantidades = new Hashtable<String, Integer>();
+					
+					while(df.next()) {
+						Queso q = findQuesoById(df.getString(1));
+						listQuesos.add(q);
+						Integer i = new Integer(df.getInt(2));
+						cantidades.put(q.getId().toString(), i);
+					}
+					
+					Factura factura = new Factura(id, cliente, listQuesos, cantidades);
+					factura.setFecha(fecha);
+					insertarFactura(factura);
 				}
-				Factura factura = new Factura(id, cliente, listQuesos, cantidades);
-				factura.setFecha(fecha);
-				insertarFactura(factura);
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(null, "Error al cargar los datos de las facturas", "Error", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
@@ -365,7 +379,7 @@ public class Empresa {
 		return -1;
 	}
 	
-	public Integer getCiudadbyNobre(String nombre) {
+	public Integer getCiudadbyNombre(String nombre) {
 		Integer id = -1;
 		String query ="SELECT id_ciudad FROM Ciudad WHERE nombre LIKE" + "'" + nombre + "'";
 		try {

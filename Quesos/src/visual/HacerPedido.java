@@ -391,31 +391,45 @@ public class HacerPedido extends JDialog {
 					public void actionPerformed(ActionEvent e) {
 						if (listModelCompra.size() != 0) {
 							if (!txtCedula.getText().equals("")) {
+								if ( Empresa.getInstance().validarDatosCliente(txtCedula.getText(), txtTelefono.getText())==true) {
 								
-								if (selected == null) {
-									selected = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(), cbxCuidad.getSelectedItem().toString(), cbxPais.getSelectedItem().toString(), txtApellido.getText());
-									Empresa.getInstance().insertarCliente(selected);
-								}
-								ArrayList<Queso> compra = new ArrayList<>();
-								for (int i = 0; i < listModelCompra.size(); i++) {
-									String aux = listModelCompra.getElementAt(i);
-									String id = aux.substring(0, aux.indexOf('|'));
+									if (selected == null) {
+										selected = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(), cbxCuidad.getSelectedItem().toString(), cbxPais.getSelectedItem().toString(), txtApellido.getText());
+
+										if (Empresa.getInstance().insertBdCliente(selected)) {
+											Empresa.getInstance().insertarCliente(selected);
+										} else {
+											selected = null;
+											JOptionPane.showMessageDialog(null, "No se pudo insertar el cliente en la base de datos", "Registro de cliente", JOptionPane.ERROR_MESSAGE);
+										}
+									}
 									
-									Queso temp = Empresa.getInstance().findQuesoById(id);
-									compra.add(temp);
-									
+									if (selected != null) {
+										ArrayList<Queso> compra = new ArrayList<>();
+										for (int i = 0; i < listModelCompra.size(); i++) {
+											String aux = listModelCompra.getElementAt(i);
+											String id = aux.substring(0, aux.indexOf('|'));
+											
+											Queso temp = Empresa.getInstance().findQuesoById(id);
+											compra.add(temp);
+											
+										}
+										Factura f = Empresa.getInstance().crearFactura(selected, compra, cantidades);
+										if (Empresa.getInstance().insertBdFactura(f)) {
+											Empresa.getInstance().insertarFactura(f);
+										} else {
+											JOptionPane.showMessageDialog(null, "No se pudo insertar la factura en la base de datos", "Registro de cliente", JOptionPane.ERROR_MESSAGE);
+										}
+										
+										JOptionPane.showMessageDialog(null, "Operacion Satisfactoria", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+										txtCedula.setText("");
+										selected = null;
+										clean();
+										updateMonto();
+									}									
+								} else {
+									JOptionPane.showMessageDialog(null, "Datos invalidos: Verifique la cedula y/o el telefono", "Informacion", JOptionPane.WARNING_MESSAGE);
 								}
-								Factura f = Empresa.getInstance().crearFactura(selected, compra, cantidades);
-								if (Empresa.getInstance().insertBdFactura(f)) {
-									Empresa.getInstance().insertarFactura(f);
-								}
-								
-								JOptionPane.showMessageDialog(null, "Operacion Satisfactoria", "Informacion", JOptionPane.INFORMATION_MESSAGE);
-								txtCedula.setText("");
-								selected = null;
-								clean();
-								updateMonto();
-								
 							} else {
 								JOptionPane.showMessageDialog(null, "Debe ingresar un cliente", "Informacion", JOptionPane.WARNING_MESSAGE);
 							}

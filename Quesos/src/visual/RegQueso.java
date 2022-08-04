@@ -280,6 +280,7 @@ public class RegQueso extends JDialog {
 					public void actionPerformed(ActionEvent e) {
 						if (selected == null) {
 							boolean valido = false;
+							boolean insertBd = false;
 							
 							Queso aux = null;
 							String id = txtCodigo.getText();
@@ -291,6 +292,7 @@ public class RegQueso extends JDialog {
 							try {
 								Statement sql = Empresa.database.createStatement();
 								sql.executeUpdate(query);
+								insertBd = true;
 							} catch (SQLException e1) {
 								JOptionPane.showMessageDialog(null, "Error al insertar el queso a la BD", "Error", JOptionPane.ERROR_MESSAGE);
 								e1.printStackTrace();
@@ -304,6 +306,7 @@ public class RegQueso extends JDialog {
 								try {
 									Statement sql = Empresa.database.createStatement();
 									sql.executeUpdate(queryE);
+									insertBd = true;
 								} catch (SQLException e1) {
 									e1.printStackTrace();
 								}
@@ -318,6 +321,7 @@ public class RegQueso extends JDialog {
 								try {
 									Statement sql = Empresa.database.createStatement();
 									sql.executeUpdate(queryC);
+									insertBd = true;
 								} catch (SQLException e1) {
 									e1.printStackTrace();
 								}
@@ -335,6 +339,7 @@ public class RegQueso extends JDialog {
 									try {
 										Statement sql = Empresa.database.createStatement();
 										sql.executeUpdate(queryCH);
+										insertBd = true;
 									} catch (SQLException e1) {
 										e1.printStackTrace();
 									}
@@ -342,10 +347,12 @@ public class RegQueso extends JDialog {
 									JOptionPane.showMessageDialog(null, "El radio externo debe ser mayor que el radio interno del queso", "Error de Registro", JOptionPane.WARNING_MESSAGE);
 								}
 							}
-							if (valido) {
-								Empresa.getInstance().insettarQueso(aux);
+							if (valido && insertBd) {
+								Empresa.getInstance().insertarQueso(aux);
 								JOptionPane.showMessageDialog(null, "Registrado satisfactoriamente", "Registro de queso", JOptionPane.INFORMATION_MESSAGE);
 								clean();
+							} else if (insertBd) {
+								JOptionPane.showMessageDialog(null, "No se pudo subir el queso a la base de datos", "Registro de queso", JOptionPane.ERROR_MESSAGE);
 							}
 						} else {
 							selected.setNombre(txtNombre.getText());

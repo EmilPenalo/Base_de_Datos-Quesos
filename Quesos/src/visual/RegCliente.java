@@ -168,15 +168,13 @@ public class RegCliente extends JDialog {
 						if (selected == null) {
 							if(Empresa.getInstance().validarDatosCliente(txtCedula.getText(), txtTelefono.getText())==true) {
 							Cliente c = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(), cbxCuidad.getSelectedItem().toString(), cbxPais.getSelectedItem().toString(), txtApellido.getText());
-							String query = "INSERT INTO Cliente VALUES("+"'"+txtCodigo.getText()+"'"+","+"'"+txtNombre.getText()+"'"+","+"'"+txtApellido.getText()+"'"+","+"'"+txtCedula.getText()+"'"+","+Empresa.getInstance().getCiudadbyNobre(cbxCuidad.getSelectedItem().toString())+","+"'"+txtTelefono.getText()+"'"+")";
-							try {
-								Statement sql = Empresa.database.createStatement();
-								sql.executeUpdate(query);
+							
+							if (Empresa.getInstance().insertBdCliente(c)) {
 								Empresa.getInstance().insertarCliente(c);
-							} catch (SQLException e1) {
-								JOptionPane.showMessageDialog(null, "Error al insertar el cliente a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-								e1.printStackTrace();
+							} else {
+								JOptionPane.showMessageDialog(null, "No se pudo insertar el cliente en la base de datos", "Registro de cliente", JOptionPane.ERROR_MESSAGE);
 							}
+							
 							JOptionPane.showMessageDialog(null, "Registrado satisfactoriamente", "Registro de cliente", JOptionPane.INFORMATION_MESSAGE);
 							clean();
 							}else {
