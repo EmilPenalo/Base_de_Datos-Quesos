@@ -81,7 +81,17 @@ public class RegCliente extends JDialog {
 			txtCodigo.setEditable(false);
 			txtCodigo.setBounds(81, 15, 146, 30);
 			if (selected == null) {
+				try {
+				String query = "SELECT COUNT(*) FROM Cliente";
+				Statement sql = Empresa.database.createStatement();
+				ResultSet cod = sql.executeQuery(query);
+				while(cod.next()) {
+				Cliente.codigo = cod.getInt(1);
+				}
 				txtCodigo.setText("C-" + Cliente.codigo);
+				}catch (SQLException e) {
+					e.printStackTrace();
+				}
 			} else {
 				txtCodigo.setText(selected.getId());
 			}
@@ -181,6 +191,11 @@ public class RegCliente extends JDialog {
 								JOptionPane.showMessageDialog(null, "Cedula o numero de telefono invalidos", "Error", JOptionPane.ERROR_MESSAGE);
 							}
 						} else {
+							try {
+								if(Empresa.getInstance().validarDatosCliente(txtCedula.getText(), txtTelefono.getText())==true) { 
+							String query = "UPDATE Cliente SET "+"nombre="+"'"+txtNombre.getText()+"'"+","+"apellido="+"'"+txtCedula.getText()+"'"+","+"id_ciudad="+Empresa.getInstance().getCiudadbyNombre(cbxCuidad.getSelectedItem().toString())+","+"telefono="+"'"+txtTelefono.getText()+"'"+" WHERE id_cliente="+"'"+txtCodigo.getText()+"'";
+							Statement sql = Empresa.database.createStatement();
+							sql.executeUpdate(query);
 							selected.setCedula(txtCedula.getText());
 							selected.setNombre(txtNombre.getText());
 							selected.setCuidad(cbxCuidad.getSelectedItem().toString());
@@ -189,10 +204,15 @@ public class RegCliente extends JDialog {
 							selected.setApellido(txtApellido.getText());
 							ListCliente.loadTable();
 							dispose();
+								}
+						}catch (SQLException e2) {
+							JOptionPane.showMessageDialog(null, "Error al modificar el cliente", "Modificar cliente", JOptionPane.ERROR_MESSAGE);
+							e2.printStackTrace();
+						}
 						}
 						
 					}
-				});
+					});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
@@ -242,12 +262,11 @@ public class RegCliente extends JDialog {
 
 	private void loadCliente() {
 		if (selected != null) {
-			Integer pais = Empresa.getInstance().getPaisbyNombre(selected.getPais());
 			loadCuidades(selected.getPais());
 
 			txtCedula.setText(selected.getCedula());
 			txtNombre.setText(selected.getNombre());
-			cbxPais.setSelectedIndex(pais);
+			cbxPais.setSelectedItem(selected.getPais());
 			cbxCuidad.setSelectedItem(selected.getCuidad());
 			txtTelefono.setText(selected.getTelefono());
 			txtApellido.setText(selected.getApellido());
