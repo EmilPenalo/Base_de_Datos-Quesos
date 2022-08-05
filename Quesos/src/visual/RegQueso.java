@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -104,7 +105,18 @@ public class RegQueso extends JDialog {
 			txtCodigo.setColumns(10);
 			txtCodigo.setBounds(69, 28, 110, 30);
 			if (selected == null) {
+				try {
+				String query = "SELECT COUNT(*) FROM Queso";
+				Statement sql = Empresa.database.createStatement();
+				ResultSet cod = sql.executeQuery(query);
+				
+				while(cod.next()) {
+					Queso.codigo = cod.getInt(1);
+				}
 				txtCodigo.setText("Q-" + Queso.codigo);
+				}catch (SQLException e) {
+					e.printStackTrace();
+				}
 			} else {
 				txtCodigo.setText(selected.getId());
 			}
@@ -355,24 +367,52 @@ public class RegQueso extends JDialog {
 								JOptionPane.showMessageDialog(null, "No se pudo subir el queso a la base de datos", "Registro de queso", JOptionPane.ERROR_MESSAGE);
 							}
 						} else {
+							try {
+							String updateQueso = "UPDATE Queso SET nombre="+"'"+txtNombre.getText()+"'"+","+"precio_base="+new Float(spnPrecioBase.getValue().toString())+","+"precio_unitario="+new Float(spnUnitario.getValue().toString()) +" WHERE id_queso="+"'"+txtCodigo.getText()+"'";
+							Statement sql = Empresa.database.createStatement();
+							sql.executeUpdate(updateQueso);
 							selected.setNombre(txtNombre.getText());
 							selected.setPrecioBase(new Float(spnPrecioBase.getValue().toString()));
 							selected.setPrecioUnitario(new Float(spnUnitario.getValue().toString()));
-							
-							if (selected instanceof Esfera) {
-								((Esfera) selected).setRadio(new Integer(spnRadioEsfera.getValue().toString()));
+							}catch (SQLException e1) {
+								JOptionPane.showMessageDialog(null, "Error al modificar el queso", "Modificar queso", JOptionPane.ERROR_MESSAGE);
+								e1.printStackTrace();
 							}
+							if (selected instanceof Esfera) {
+								try {
+								String updateEfera ="UPDATE Esfera SET radio="+ new Integer(spnRadioEsfera.getValue().toString()) + " WHERE id_queso="+"'"+txtCodigo.getText()+"'";
+								Statement sql = Empresa.database.createStatement();
+								sql.executeUpdate(updateEfera);
+								((Esfera) selected).setRadio(new Integer(spnRadioEsfera.getValue().toString()));
+								}catch (SQLException e2) {
+									e2.printStackTrace();
+								}
+								}
 							
 							if (selected instanceof Cilindro) {
+								try {
+								String updateCilindro = "UPDATE Cilindro SET radio="+new Integer(spnRadioCilindro.getValue().toString())+","+"longitud="+new Integer(spnLongitudCilindro.getValue().toString()) + " WHERE id_queso="+"'"+txtCodigo.getText()+"'";
+								Statement sql = Empresa.database.createStatement();
+								sql.executeUpdate(updateCilindro);
 								((Cilindro) selected).setRadio(new Integer(spnRadioCilindro.getValue().toString()));
 								((Cilindro) selected).setLongitud(new Integer(spnLongitudCilindro.getValue().toString()));
+								}catch (SQLException e3) {
+									e3.printStackTrace();
+								}
 							}
 							
 							if (selected instanceof CilindroHueco) {
+								try {
+								String updateCH = "UPDATE Cilindro SET radio="+new Integer(spnRadioHueco.getValue().toString())+","+"longitud="+new Integer(spnLongitudHueco.getValue().toString())+","+"radio_interior="+new Integer(spnRadioInterno.getValue().toString()) + " WHERE id_queso="+"'"+txtCodigo.getText()+"'";
+								Statement sql = Empresa.database.createStatement();
+								sql.executeUpdate(updateCH);
 								((CilindroHueco) selected).setRadio(new Integer(spnRadioHueco.getValue().toString()));
 								((CilindroHueco) selected).setLongitud(new Integer(spnLongitudHueco.getValue().toString()));
 								((CilindroHueco) selected).setRadioInterno(new Integer(spnRadioInterno.getValue().toString()));
+								}catch (SQLException e4) {
+								e4.printStackTrace();
 							}
+								}
 							ListQueso.loadTable(0);
 							dispose();
 						}
