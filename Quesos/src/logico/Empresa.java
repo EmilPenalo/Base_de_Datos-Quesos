@@ -243,6 +243,8 @@ public class Empresa {
 	
 	public void loadClientes() {
 		if(database!=null) {
+			clientes.clear();
+			
 			String query = "SELECT Cliente.id_cliente, Cliente.cedula, Cliente.nombre,Cliente.apellido,Ciudad.nombre AS ciudad,Pais.nombre AS pais,Cliente.telefono FROM Cliente, Pais, Ciudad WHERE Ciudad.id_ciudad = Cliente.id_ciudad AND ciudad.id_pais = Pais.id_pais";
 			try {
 				Statement sql = database.createStatement();
@@ -268,6 +270,9 @@ public class Empresa {
 	
 	public void loadQuesos(String id_factura) {
 		if(database!=null) {
+			
+			quesos.clear();
+			
 			String query;
 			if (id_factura == null) {
 				query = "SELECT Cilindro.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, Cilindro.radio, Cilindro.longitud FROM Queso,Cilindro WHERE Queso.id_queso = Cilindro.id_queso";
@@ -475,15 +480,15 @@ public class Empresa {
 		return resList;
 	}
 
+	public void clearClientes() {
+		clientes.clear();
+	}
+
 	public void clearQuesos() {
 		quesos.clear();
 	}
 
-//	public ArrayList<Queso> getQuesosDeFactura(String id_factura) {
-//		ArrayList<Queso> res = new ArrayList<Queso>();
-//		for (Queso q : quesos) {
-//			
-//		}
-//		return res;
-//	}
+	public void clearFacturas() {
+		facturas.clear();
+	}
 }

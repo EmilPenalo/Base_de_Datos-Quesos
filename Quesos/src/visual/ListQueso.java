@@ -186,6 +186,7 @@ public class ListQueso extends JDialog {
 		switch (sel) {
 		case 0:
 			if (quesos == null) {
+				Empresa.getInstance().loadQuesos(null);
 				for (Queso q : Empresa.getInstance().getQuesos()) {
 					
 					rows[0] = q.getId();
@@ -234,6 +235,7 @@ public class ListQueso extends JDialog {
 			break;
 		case 1:
 			if (quesos == null) {
+				Empresa.getInstance().loadQuesos(null);
 				for (Queso q : Empresa.getInstance().getQuesos()) {
 					
 					if (q instanceof Esfera) {
@@ -263,6 +265,7 @@ public class ListQueso extends JDialog {
 			
 		case 2:
 			if (quesos == null) {
+				Empresa.getInstance().loadQuesos(null);
 				for (Queso q : Empresa.getInstance().getQuesos()) {
 
 					if (q instanceof Cilindro && !(q instanceof CilindroHueco)) {
@@ -292,6 +295,7 @@ public class ListQueso extends JDialog {
 			
 		case 3:
 			if (quesos == null) {
+				Empresa.getInstance().loadQuesos(null);
 				for (Queso q : Empresa.getInstance().getQuesos()) {
 
 					if (q instanceof CilindroHueco) {

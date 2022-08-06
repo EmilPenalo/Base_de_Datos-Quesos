@@ -162,6 +162,8 @@ public class ListCliente extends JDialog {
 	public static void loadTable() {
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
+		
+		Empresa.getInstance().loadClientes();
 		for (Cliente c : Empresa.getInstance().getClientes()) {
 			
 			rows[0] = c.getId();

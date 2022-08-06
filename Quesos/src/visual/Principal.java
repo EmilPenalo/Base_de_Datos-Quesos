@@ -85,7 +85,7 @@ public class Principal extends JFrame {
 		
 		if(Empresa.database!=null) {
 //			Empresa.getInstance().loadQuesos(null);
-			Empresa.getInstance().loadClientes();
+//			Empresa.getInstance().loadClientes();
 			//Empresa.getInstance().loadFactura();
 		}else {
 			JOptionPane.showMessageDialog(null, "Error al conectarse a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -103,6 +103,7 @@ public class Principal extends JFrame {
 				ListCliente listc = new ListCliente();
 				listc.setModal(true);
 				listc.setVisible(true);
+				Empresa.getInstance().clearClientes();
 			}
 		});
 		
@@ -136,6 +137,7 @@ public class Principal extends JFrame {
 				ListQueso listQ = new ListQueso(null);
 				listQ.setModal(true);
 				listQ.setVisible(true);
+				Empresa.getInstance().clearQuesos();
 			}
 		});
 		mnQuesos.add(mntmNewMenuItem_3);
@@ -159,6 +161,7 @@ public class Principal extends JFrame {
 				ListFactura fact = new ListFactura(null);
 				fact.setModal(true);
 				fact.setVisible(true);
+				Empresa.getInstance().clearFacturas();
 			}
 		});
 		mnPedidos.add(mntmNewMenuItem_4);

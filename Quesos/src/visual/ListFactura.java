@@ -114,7 +114,6 @@ public class ListFactura extends JDialog {
 								ListQueso aux = new ListQueso(Empresa.getInstance().getQuesos());
 								aux.setModal(true);
 								aux.setVisible(true);
-								Empresa.getInstance().clearQuesos();
 							}
 						});
 						btnSelect.setEnabled(false);
