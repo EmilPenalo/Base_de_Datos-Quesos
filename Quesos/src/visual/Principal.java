@@ -84,7 +84,7 @@ public class Principal extends JFrame {
 		setResizable(false);
 		
 		if(Empresa.database!=null) {
-			Empresa.getInstance().loadQuesos();
+//			Empresa.getInstance().loadQuesos(null);
 			Empresa.getInstance().loadClientes();
 			//Empresa.getInstance().loadFactura();
 		}else {

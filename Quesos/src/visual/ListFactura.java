@@ -23,6 +23,7 @@ import javax.swing.ListSelectionModel;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class ListFactura extends JDialog {
 
@@ -30,7 +31,7 @@ public class ListFactura extends JDialog {
 	private JTable table;
 	private static DefaultTableModel model;
 	private static Object rows[];
-	private Factura selected = null;
+	private String selected = null;
 	private JButton btnSelect;
 	private static Cliente cliente = null;
 
@@ -82,8 +83,7 @@ public class ListFactura extends JDialog {
 							
 							if (index != -1) {
 								btnSelect.setEnabled(true);
-								String id = (String)(model.getValueAt(index, 0));
-								selected = Empresa.getInstance().findFacturaById(id);
+								selected = (String)(model.getValueAt(index, 0));
 							}
 						}
 					});
@@ -110,9 +110,11 @@ public class ListFactura extends JDialog {
 						btnSelect = new JButton("Seleccionar");
 						btnSelect.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
-								ListQueso aux = new ListQueso(selected.getQuesos());
+								Empresa.getInstance().loadQuesos(selected);
+								ListQueso aux = new ListQueso(Empresa.getInstance().getQuesos());
 								aux.setModal(true);
 								aux.setVisible(true);
+								Empresa.getInstance().clearQuesos();
 							}
 						});
 						btnSelect.setEnabled(false);
@@ -127,28 +129,29 @@ public class ListFactura extends JDialog {
 	}
 
 	public static void loadTable() {
+		
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
 		
 		if (cliente == null) {
-			for (Factura f : Empresa.getInstance().getFacturas()) {
+			for (String[] res : Empresa.getInstance().getAllFacturas()) {
 				
-				rows[0] = f.getId();
-				rows[1] = f.getCliente().getNombre() + " " + f.getCliente().getApellido();
-				rows[2] = f.cantQuesos();
-				rows[3] = f.precioTotal();
-				rows[4] = f.getFecha();
+				rows[0] = res[0];
+				rows[1] = res[1];
+				rows[2] = res[2];
+				rows[3] = res[3];
+				rows[4] = res[4];
 						
 				model.addRow(rows);
 			}
 		} else {
-			for (Factura f : Empresa.getInstance().getFacturasOfCliente(cliente.getCedula())) {
+			for (String[] res : Empresa.getInstance().getAllFacturas()) {
 				
-				rows[0] = f.getId();
-				rows[1] = f.getCliente().getNombre() + " " + f.getCliente().getApellido();
-				rows[2] = f.cantQuesos();
-				rows[3] = f.precioTotal();
-				rows[4] = f.getFecha();
+				rows[0] = res[0];
+				rows[1] = res[1];
+				rows[2] = res[2];
+				rows[3] = res[3];
+				rows[4] = res[4];
 						
 				model.addRow(rows);
 			}

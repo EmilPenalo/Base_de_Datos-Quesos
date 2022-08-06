@@ -266,9 +266,18 @@ public class Empresa {
 		}
 	}
 	
-	public void loadQuesos() {
+	public void loadQuesos(String id_factura) {
 		if(database!=null) {
-			String query = "SELECT Cilindro.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, Cilindro.radio, Cilindro.longitud FROM Queso,Cilindro WHERE Queso.id_queso = Cilindro.id_queso";
+			String query;
+			if (id_factura == null) {
+				query = "SELECT Cilindro.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, Cilindro.radio, Cilindro.longitud FROM Queso,Cilindro WHERE Queso.id_queso = Cilindro.id_queso";
+			} else {
+				query = "SELECT Cilindro.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, Cilindro.radio, Cilindro.longitud \r\n"
+						+ "FROM Queso,Cilindro,Detalle_Factura \r\n"
+						+ "WHERE Queso.id_queso = Cilindro.id_queso AND \r\n"
+						+ "Detalle_Factura.id_queso = Queso.id_queso AND\r\n"
+						+ "Detalle_Factura.id_factura = '"+id_factura+"'";
+			}
 			try {
 				Statement sql = database.createStatement();
 				ResultSet QC = sql.executeQuery(query);
@@ -283,8 +292,17 @@ public class Empresa {
 					Cilindro qc = new Cilindro(id, nombre, precioBase, precioUnitario, radio, longitud);
 					insertarQueso(qc);
 				}
-				String qchQuery ="SELECT CilindroHueco.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, CilindroHueco.radio,CilindroHueco.longitud,CilindroHueco.radio_interior FROM Queso,CilindroHueco WHERE Queso.id_queso = CilindroHueco.id_queso";
-				ResultSet QCH = sql.executeQuery(qchQuery);
+				
+				if (id_factura == null) {
+					query ="SELECT CilindroHueco.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, CilindroHueco.radio,CilindroHueco.longitud,CilindroHueco.radio_interior FROM Queso,CilindroHueco WHERE Queso.id_queso = CilindroHueco.id_queso";
+				} else {
+					query = "SELECT CilindroHueco.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, CilindroHueco.radio,CilindroHueco.longitud,CilindroHueco.radio_interior \r\n"
+							+ "FROM Queso,CilindroHueco,Detalle_Factura \r\n"
+							+ "WHERE Queso.id_queso = CilindroHueco.id_queso AND\r\n"
+							+ "Detalle_Factura.id_queso = Queso.id_queso AND\r\n"
+							+ "Detalle_Factura.id_factura = '"+id_factura+"'";
+				}
+				ResultSet QCH = sql.executeQuery(query);
 				
 				while(QCH.next()) {
 					String id = QCH.getString(1);
@@ -298,8 +316,16 @@ public class Empresa {
 					insertarQueso(qch);
 				}
 				
-				String qeQuery ="SELECT Esfera.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, Esfera.radio  FROM Queso,Esfera WHERE Queso.id_queso = Esfera.id_queso";
-				ResultSet QE = sql.executeQuery(qeQuery);
+				if (id_factura == null) {
+					query = "SELECT Esfera.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, Esfera.radio  FROM Queso,Esfera WHERE Queso.id_queso = Esfera.id_queso";
+				} else {
+					query = "SELECT Esfera.id_queso, Queso.nombre, Queso.precio_base,Queso.precio_unitario, Esfera.radio  \r\n"
+							+ "FROM Queso,Esfera,Detalle_Factura \r\n"
+							+ "WHERE Queso.id_queso = Esfera.id_queso AND\r\n"
+							+ "Detalle_Factura.id_queso = Queso.id_queso AND\r\n"
+							+ "Detalle_Factura.id_factura = '"+id_factura+"'";
+				}
+				ResultSet QE = sql.executeQuery(query);
 				
 				while(QE.next()) {
 					String id = QE.getString(1);
@@ -424,4 +450,40 @@ public class Empresa {
 			return false;
 		}
 	}
+
+	public ArrayList<String[]> getAllFacturas() {
+		ArrayList<String[]> resList = new ArrayList<String[]>();
+		String query ="SELECT * FROM view_getAllFacturas";
+		
+		try {
+			Statement sql = database.createStatement();
+			ResultSet res = sql.executeQuery(query);
+			while(res.next()) {
+				String[] i = new String[5];
+				
+				i[0] = res.getString(1);
+				i[1] = res.getString(2)+" "+res.getString(3);
+				i[2] = res.getString(4);
+				i[3] = res.getString(5);
+				i[4] = res.getString(6);
+				
+				resList.add(i);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return resList;
+	}
+
+	public void clearQuesos() {
+		quesos.clear();
+	}
+
+//	public ArrayList<Queso> getQuesosDeFactura(String id_factura) {
+//		ArrayList<Queso> res = new ArrayList<Queso>();
+//		for (Queso q : quesos) {
+//			
+//		}
+//		return res;
+//	}
 }
