@@ -123,11 +123,11 @@ public class Empresa {
 		}
 	}
 	
-	public Boolean insertBdFactura(Factura f) {
+	public Boolean insertBdFactura(Factura f, Float total) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");  
 		String strFecha = dateFormat.format(f.getFecha());
 		
-		String query = "INSERT INTO Factura VALUES("+"'"+f.getId()+"'"+",'"+f.getCliente().getId()+"'"+","+"'"+strFecha+"'"+")";
+		String query = "INSERT INTO Factura VALUES("+"'"+f.getId()+"'"+",'"+f.getCliente().getId()+"'"+","+"'"+strFecha+"',"+total.toString()+")";
 		try {
 			Statement sql = Empresa.database.createStatement();
 			sql.executeUpdate(query);
@@ -205,7 +205,7 @@ public class Empresa {
 	}
 
 	public Factura crearFactura(Cliente c, ArrayList<Queso> compra, Hashtable<String, Integer> cants) {
-		Factura f = new Factura("F-" + Factura.codigo, c, compra, cants);	
+		Factura f = new Factura(getCodFactura(), c, compra, cants);	
 		return f;
 	}
 	
@@ -241,11 +241,20 @@ public class Empresa {
 		}
 	}
 	
-	public void loadClientes() {
+	public void loadClientes(String cedula_dada) {
 		if(database!=null) {
 			clientes.clear();
 			
-			String query = "SELECT Cliente.id_cliente, Cliente.cedula, Cliente.nombre,Cliente.apellido,Ciudad.nombre AS ciudad,Pais.nombre AS pais,Cliente.telefono FROM Cliente, Pais, Ciudad WHERE Ciudad.id_ciudad = Cliente.id_ciudad AND ciudad.id_pais = Pais.id_pais";
+			String query;
+			if (cedula_dada == null) {
+				query = "SELECT Cliente.id_cliente, Cliente.cedula, Cliente.nombre,Cliente.apellido,Ciudad.nombre AS ciudad,Pais.nombre AS pais,Cliente.telefono FROM Cliente, Pais, Ciudad WHERE Ciudad.id_ciudad = Cliente.id_ciudad AND ciudad.id_pais = Pais.id_pais";
+			} else {
+				query = "SELECT Cliente.id_cliente, Cliente.cedula, Cliente.nombre,Cliente.apellido,Ciudad.nombre AS ciudad,Pais.nombre AS pais,Cliente.telefono \r\n"
+						+ "FROM Cliente, Pais, Ciudad \r\n"
+						+ "WHERE Ciudad.id_ciudad = Cliente.id_ciudad AND \r\n"
+						+ "ciudad.id_pais = Pais.id_pais AND\r\n"
+						+ "Cliente.cedula = '"+cedula_dada+"'";
+			}
 			try {
 				Statement sql = database.createStatement();
 				ResultSet clientes = sql.executeQuery(query);
@@ -427,33 +436,48 @@ public class Empresa {
 	}
 	
 	public boolean validarDatosCliente(String cedula,String telefono) {
-		String query1 = "SELECT dbo.validar_cedula"+"("+"'"+cedula+"'"+")";
-		String  query2 = "SELECT dbo.validar_telefono"+"("+"'"+telefono+"'"+")";
-		boolean b1= false, b2 =false;
+		boolean b1 = validarCedula(cedula);
+		boolean b2 = validarTelefono(telefono);
+
+		if(b1==true && b2==true) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean validarCedula(String cedula) {
+		String query = "SELECT dbo.validar_cedula"+"("+"'"+cedula+"'"+")";
 		try {
 			Statement sql = database.createStatement();
-			ResultSet s1 = sql.executeQuery(query1);
+			ResultSet s1 = sql.executeQuery(query);
 			while(s1.next()) {
-				if(s1.getBoolean(1)==true) {
-				b1 = true;
-				}
-			}
-			
-			ResultSet s2 = sql.executeQuery(query2);
-			while(s2.next()) {
-				if(s2.getBoolean(1)==true) {
-					b2 = true;
+				if(s1.getBoolean(1) == true) {
+					return true;
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
-		if(b1==true && b2==true) {
-			return true;
-		}else {
+		return false;
+	}
+	
+	public boolean validarTelefono(String telefono) {
+		String query = "SELECT dbo.validar_telefono"+"("+"'"+telefono+"'"+")";
+		try {
+			Statement sql = database.createStatement();
+			ResultSet s1 = sql.executeQuery(query);
+			while(s1.next()) {
+				if(s1.getBoolean(1) == true) {
+					return true;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
+		return false;
 	}
 
 	public ArrayList<String[]> getAllFacturas() {
@@ -490,5 +514,53 @@ public class Empresa {
 
 	public void clearFacturas() {
 		facturas.clear();
+	}
+
+	public String getCodCliente() {
+		try {
+			String query = "SELECT COUNT(*) FROM Cliente";
+			Statement sql = Empresa.database.createStatement();
+			ResultSet cod = sql.executeQuery(query);
+			
+			while(cod.next()) {
+				Cliente.codigo = cod.getInt(1)+1;
+			}
+			return "C-" + Cliente.codigo;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getCodFactura() {
+		try {
+			String query = "SELECT COUNT(*) FROM Factura";
+			Statement sql = Empresa.database.createStatement();
+			ResultSet cod = sql.executeQuery(query);
+			
+			while(cod.next()) {
+				Factura.codigo = cod.getInt(1)+1;
+			}
+			return "F-" + Factura.codigo;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String getCodQueso() {
+		try {
+			String query = "SELECT COUNT(*) FROM Queso";
+			Statement sql = Empresa.database.createStatement();
+			ResultSet cod = sql.executeQuery(query);
+			
+			while(cod.next()) {
+				Queso.codigo = cod.getInt(1)+1;
+			}
+			return "Q-" + Queso.codigo;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

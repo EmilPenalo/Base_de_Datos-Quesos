@@ -163,7 +163,7 @@ public class ListCliente extends JDialog {
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
 		
-		Empresa.getInstance().loadClientes();
+		Empresa.getInstance().loadClientes(null);
 		for (Cliente c : Empresa.getInstance().getClientes()) {
 			
 			rows[0] = c.getId();

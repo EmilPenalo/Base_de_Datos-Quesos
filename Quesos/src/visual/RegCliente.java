@@ -81,17 +81,8 @@ public class RegCliente extends JDialog {
 			txtCodigo.setEditable(false);
 			txtCodigo.setBounds(81, 15, 146, 30);
 			if (selected == null) {
-				try {
-				String query = "SELECT COUNT(*) FROM Cliente";
-				Statement sql = Empresa.database.createStatement();
-				ResultSet cod = sql.executeQuery(query);
-				while(cod.next()) {
-				Cliente.codigo = cod.getInt(1);
-				}
-				txtCodigo.setText("C-" + Cliente.codigo);
-				}catch (SQLException e) {
-					e.printStackTrace();
-				}
+				txtCodigo.setText(Empresa.getInstance().getCodCliente());
+				
 			} else {
 				txtCodigo.setText(selected.getId());
 			}

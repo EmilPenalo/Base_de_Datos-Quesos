@@ -125,26 +125,32 @@ public class HacerPedido extends JDialog {
 			JButton btnContinuar = new JButton("Continuar");
 			btnContinuar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					selected = Empresa.getInstance().findClienteByCedula(txtCedula.getText());
-					clean();
-					if (selected != null) {
-						loadCuidades(selected.getPais());
-
-						txtCodigo.setText(selected.getId());
-						txtNombre.setText(selected.getNombre());
-						txtApellido.setText(selected.getApellido());
-						cbxPais.setSelectedItem(selected.getPais());
-						cbxCuidad.setSelectedItem(selected.getCuidad());
-						txtTelefono.setText(selected.getTelefono());
+					if (Empresa.getInstance().validarCedula(txtCedula.getText())) {
+						Empresa.getInstance().loadClientes(txtCedula.getText());
+						selected = Empresa.getInstance().findClienteByCedula(txtCedula.getText());
 						
-						cbxCuidad.setEnabled(false);
+						clean();
+						if (selected != null) {
+							loadCuidades(selected.getPais());
+
+							txtCodigo.setText(selected.getId());
+							txtNombre.setText(selected.getNombre());
+							txtApellido.setText(selected.getApellido());
+							cbxPais.setSelectedItem(selected.getPais());
+							cbxCuidad.setSelectedItem(selected.getCuidad());
+							txtTelefono.setText(selected.getTelefono());
+							
+							cbxCuidad.setEnabled(false);
+						} else {
+							txtCodigo.setText(Empresa.getInstance().getCodCliente());
+							txtNombre.setEditable(true);
+							txtApellido.setEditable(true);
+							cbxPais.setEnabled(true);
+							cbxCuidad.setEnabled(true);
+							txtTelefono.setEditable(true);
+						}
 					} else {
-						txtCodigo.setText("C-" + Cliente.codigo);
-						txtNombre.setEditable(true);
-						txtApellido.setEditable(true);
-						cbxPais.setEnabled(true);
-						cbxCuidad.setEnabled(true);
-						txtTelefono.setEditable(true);
+						JOptionPane.showMessageDialog(null, "Datos invalidos: Verifique la cedula", "Informacion", JOptionPane.WARNING_MESSAGE);
 					}
 				}
 			});
@@ -391,7 +397,7 @@ public class HacerPedido extends JDialog {
 					public void actionPerformed(ActionEvent e) {
 						if (listModelCompra.size() != 0) {
 							if (!txtCedula.getText().equals("")) {
-								if ( Empresa.getInstance().validarDatosCliente(txtCedula.getText(), txtTelefono.getText())==true) {
+								if ( Empresa.getInstance().validarTelefono(txtTelefono.getText()) == true) {
 								
 									if (selected == null) {
 										selected = new Cliente(txtCodigo.getText(), txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(), cbxCuidad.getSelectedItem().toString(), cbxPais.getSelectedItem().toString(), txtApellido.getText());
@@ -415,7 +421,8 @@ public class HacerPedido extends JDialog {
 											
 										}
 										Factura f = Empresa.getInstance().crearFactura(selected, compra, cantidades);
-										if (Empresa.getInstance().insertBdFactura(f)) {
+										Float total = new Float(spnMonto.getValue().toString());
+										if (Empresa.getInstance().insertBdFactura(f, total)) {
 											Empresa.getInstance().insertarFactura(f);
 										} else {
 											JOptionPane.showMessageDialog(null, "No se pudo insertar la factura en la base de datos", "Registro de cliente", JOptionPane.ERROR_MESSAGE);
@@ -428,7 +435,7 @@ public class HacerPedido extends JDialog {
 										updateMonto();
 									}									
 								} else {
-									JOptionPane.showMessageDialog(null, "Datos invalidos: Verifique la cedula y/o el telefono", "Informacion", JOptionPane.WARNING_MESSAGE);
+									JOptionPane.showMessageDialog(null, "Datos invalidos: Verifique el telefono", "Informacion", JOptionPane.WARNING_MESSAGE);
 								}
 							} else {
 								JOptionPane.showMessageDialog(null, "Debe ingresar un cliente", "Informacion", JOptionPane.WARNING_MESSAGE);
@@ -495,6 +502,8 @@ public class HacerPedido extends JDialog {
 
 	private void loadDisponibles() {
 		listModelDisp.removeAllElements();
+		
+		Empresa.getInstance().loadQuesos(null);
 		for (Queso q : Empresa.getInstance().getQuesos()) {
 			if (q != null) {
 				String aux = new String(q.getId());

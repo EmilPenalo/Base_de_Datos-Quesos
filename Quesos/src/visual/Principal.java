@@ -151,6 +151,9 @@ public class Principal extends JFrame {
 				HacerPedido pedido = new HacerPedido();
 				pedido.setModal(true);
 				pedido.setVisible(true);
+				
+				Empresa.getInstance().clearQuesos();
+				Empresa.getInstance().clearClientes();
 			}
 		});
 		mnPedidos.add(mntmNewMenuItem_2);

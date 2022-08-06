@@ -105,18 +105,8 @@ public class RegQueso extends JDialog {
 			txtCodigo.setColumns(10);
 			txtCodigo.setBounds(69, 28, 110, 30);
 			if (selected == null) {
-				try {
-				String query = "SELECT COUNT(*) FROM Queso";
-				Statement sql = Empresa.database.createStatement();
-				ResultSet cod = sql.executeQuery(query);
+				txtCodigo.setText(Empresa.getInstance().getCodQueso());
 				
-				while(cod.next()) {
-					Queso.codigo = cod.getInt(1);
-				}
-				txtCodigo.setText("Q-" + Queso.codigo);
-				}catch (SQLException e) {
-					e.printStackTrace();
-				}
 			} else {
 				txtCodigo.setText(selected.getId());
 			}
