@@ -23,7 +23,22 @@ import javax.swing.ListSelectionModel;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import javax.swing.JLabel;
+import javax.swing.JFormattedTextField;
+import java.awt.Component;
+import java.awt.Insets;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import javax.swing.BoxLayout;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import java.util.Date;
+import java.util.Calendar;
 
 public class ListFactura extends JDialog {
 
@@ -34,6 +49,9 @@ public class ListFactura extends JDialog {
 	private String selected = null;
 	private JButton btnSelect;
 	private static Cliente cliente = null;
+	private JSpinner spnFin;
+	private JSpinner spnIni;
+	private JButton btnContinuar;
 
 	/**
 	 * Launch the application.
@@ -55,21 +73,22 @@ public class ListFactura extends JDialog {
 		cliente = clienteDado;
 		
 		setTitle("Listado de Facturas");
-		setBounds(100, 100, 600, 351);
+		setBounds(100, 100, 600, 450);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(new BorderLayout(0, 0));
+		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
 		{
 			JPanel panel = new JPanel();
 			panel.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			contentPanel.add(panel, BorderLayout.CENTER);
-			panel.setLayout(new BorderLayout(0, 0));
+			contentPanel.add(panel);
+			panel.setLayout(null);
 			{
 				JScrollPane scrollPane = new JScrollPane();
-				panel.add(scrollPane, BorderLayout.CENTER);
+				scrollPane.setBounds(2, 47, 572, 319);
+				panel.add(scrollPane);
 				{
 					String headers[] = {"Codigo", "Cliente", "Quesos", "Monto", "Fecha"};
 					model = new DefaultTableModel();
@@ -91,6 +110,48 @@ public class ListFactura extends JDialog {
 					table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					scrollPane.setViewportView(table);
 				}
+			}
+			{
+				JPanel panel_1 = new JPanel();
+				panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
+				panel_1.setBounds(2, 2, 572, 40);
+				panel.add(panel_1);
+				panel_1.setLayout(null);
+				
+				JLabel lblFechaInicial = new JLabel("Fecha inicial:");
+				lblFechaInicial.setBounds(10, 13, 89, 14);
+				panel_1.add(lblFechaInicial);
+				
+				btnContinuar = new JButton("Continuar");
+				btnContinuar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");  
+						
+					    String ini = dateFormat.format(spnIni.getValue());  					
+					    String fin = dateFormat.format(spnFin.getValue());
+					    
+						loadTable(ini, fin);
+					}
+				});
+				btnContinuar.setBounds(456, 8, 106, 23);
+				panel_1.add(btnContinuar);
+				
+				spnIni = new JSpinner();
+				spnIni.setModel(new SpinnerDateModel(new Date(), null, null, Calendar.DAY_OF_YEAR));
+				spnIni.setEditor(new JSpinner.DateEditor(spnIni, "yyyy/MM/dd"));
+				spnIni.setBounds(94, 10, 129, 20);
+				panel_1.add(spnIni);
+				
+				JLabel lblFechaFin = new JLabel("Fecha final:");
+				lblFechaFin.setBounds(238, 13, 89, 14);
+				panel_1.add(lblFechaFin);
+				
+				spnFin = new JSpinner();
+				spnFin.setModel(new SpinnerDateModel(new Date(), null, null, Calendar.DAY_OF_YEAR));
+				spnFin.setEditor(new JSpinner.DateEditor(spnFin, "yyyy/MM/dd"));
+				spnFin.setBounds(317, 10, 129, 20);
+				panel_1.add(spnFin);
+				
 			}
 		}
 		{
@@ -124,16 +185,16 @@ public class ListFactura extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
-		loadTable();
 	}
 
-	public static void loadTable() {
+	public static void loadTable(String fechaini, String fechafin) {
+		Empresa.getInstance().clearFacturas();
 		
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
 		
 		if (cliente == null) {
-			for (String[] res : Empresa.getInstance().getAllFacturas()) {
+			for (String[] res : Empresa.getInstance().getAllFacturas(fechaini, fechafin)) {
 				
 				rows[0] = res[0];
 				rows[1] = res[1];
@@ -144,7 +205,7 @@ public class ListFactura extends JDialog {
 				model.addRow(rows);
 			}
 		} else {
-			for (String[] res : Empresa.getInstance().getAllFacturas()) {
+			for (String[] res : Empresa.getInstance().getAllFacturas(fechaini, fechafin)) {
 				
 				rows[0] = res[0];
 				rows[1] = res[1];
@@ -156,5 +217,4 @@ public class ListFactura extends JDialog {
 			}
 		}
 	}
-
 }

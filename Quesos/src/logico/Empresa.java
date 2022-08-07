@@ -480,9 +480,9 @@ public class Empresa {
 		return false;
 	}
 
-	public ArrayList<String[]> getAllFacturas() {
+	public ArrayList<String[]> getAllFacturas(String fechaini, String fechafin) {
 		ArrayList<String[]> resList = new ArrayList<String[]>();
-		String query ="SELECT * FROM view_getAllFacturas";
+		String query ="exec sp_getFacturasByDate '"+fechaini+"','"+fechafin+"'";
 		
 		try {
 			Statement sql = database.createStatement();
