@@ -563,4 +563,65 @@ public class Empresa {
 		}
 		return null;
 	}
+	
+	public boolean eliminarQuesoBd(Queso q) {
+		String query = "SELECT dbo.validar_elim_queso("+"'"+q.id+"'"+")";
+		boolean b= false;
+		try {
+			Statement sql = database.createStatement();
+			ResultSet res = sql.executeQuery(query);
+			
+			while(res.next()) {
+				b = res.getBoolean(1);
+			}
+			
+			if(b==true) {
+				if(q instanceof Cilindro) {
+					String delC = "DELETE FROM Cilindro WHERE id_queso="+"'"+q.id+"'";
+					sql.executeUpdate(delC);
+				}
+				
+				if(q instanceof CilindroHueco) {
+					String delCH = "DELETE FROM CilindroHueco WHERE id_queso="+"'"+q.id+"'";
+					sql.executeUpdate(delCH);
+				}
+				
+				if(q instanceof Esfera) {
+					String delE = "DELETE FROM Esfera WHERE id_queso="+"'"+q.id+"'";
+					sql.executeUpdate(delE);
+				}
+				String delQ = "DELETE FROM Queso WHERE id_queso="+"'"+q.id+"'"; 
+				sql.executeUpdate(delQ);
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return false;
+	}
+	
+	public boolean eliminarClieteBd(Cliente c) {
+		String query = "SELECT dbo.validar_elim_cliente("+"'"+c.getId()+"'"+")";
+		boolean b = false;
+		try {
+			Statement sql = database.createStatement();
+			ResultSet res = sql.executeQuery(query);
+			
+			while(res.next()) {
+				b = res.getBoolean(1);
+			}
+			
+			if(b==true) {
+				String del = "DELETE FROM Cliente WHERE id_cliente="+"'"+c.getId()+"'";
+				sql.executeUpdate(del);
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return false;
+	}
 }

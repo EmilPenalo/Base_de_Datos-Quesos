@@ -184,7 +184,7 @@ public class RegCliente extends JDialog {
 						} else {
 							try {
 								if(Empresa.getInstance().validarDatosCliente(txtCedula.getText(), txtTelefono.getText())==true) { 
-							String query = "UPDATE Cliente SET "+"nombre="+"'"+txtNombre.getText()+"'"+","+"apellido="+"'"+txtCedula.getText()+"'"+","+"id_ciudad="+Empresa.getInstance().getCiudadbyNombre(cbxCuidad.getSelectedItem().toString())+","+"telefono="+"'"+txtTelefono.getText()+"'"+" WHERE id_cliente="+"'"+txtCodigo.getText()+"'";
+							String query = "UPDATE Cliente SET "+"nombre="+"'"+txtNombre.getText()+"'"+","+"apellido="+"'"+txtApellido.getText()+"'"+","+"id_ciudad="+Empresa.getInstance().getCiudadbyNombre(cbxCuidad.getSelectedItem().toString())+","+"telefono="+"'"+txtTelefono.getText()+"'"+","+"cedula="+"'"+txtCedula.getText()+"'"+" WHERE id_cliente="+"'"+txtCodigo.getText()+"'";
 							Statement sql = Empresa.database.createStatement();
 							sql.executeUpdate(query);
 							selected.setCedula(txtCedula.getText());

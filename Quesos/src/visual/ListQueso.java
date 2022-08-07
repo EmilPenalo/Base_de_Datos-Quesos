@@ -61,7 +61,7 @@ public class ListQueso extends JDialog {
 		} else {
 			quesos = null;
 		}
-		setTitle("Listado de Clientes");
+		setTitle("Listado de Quesos");
 		setBounds(100, 100, 444, 325);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -161,8 +161,12 @@ public class ListQueso extends JDialog {
 						public void actionPerformed(ActionEvent e) {
 							int option = JOptionPane.showConfirmDialog(null, "Desea eliminar el queso seleccionado: " + selected.getId() + "?", "Eliminar cliente", JOptionPane.YES_NO_OPTION);
 							if (option == JOptionPane.YES_OPTION) {
+								if(Empresa.getInstance().eliminarQuesoBd(selected)==true) {
 								Empresa.getInstance().eliminarQueso(selected);
 								loadTable(0);
+								}else {
+									JOptionPane.showMessageDialog(null, "No se puede eliminar Queso "+selected.getId(), "Eliminar queso", JOptionPane.WARNING_MESSAGE);
+								}
 							}
 							
 							btnEliminar.setEnabled(false);

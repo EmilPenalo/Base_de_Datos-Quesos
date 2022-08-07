@@ -140,8 +140,12 @@ public class ListCliente extends JDialog {
 						public void actionPerformed(ActionEvent e) {
 							int option = JOptionPane.showConfirmDialog(null, "Desea eliminar el cliente seleccionado: " + selected.getId() + "|" + selected.getNombre() + "?", "Eliminar cliente", JOptionPane.YES_NO_OPTION);
 							if (option == JOptionPane.YES_OPTION) {
+								if(Empresa.getInstance().eliminarClieteBd(selected)==true) {
 								Empresa.getInstance().eliminarCliente(selected);
 								loadTable();
+								}else {
+									JOptionPane.showMessageDialog(null, "No se puede eliminar al cliente "+selected.getId(), "Eliminar cliente", JOptionPane.WARNING_MESSAGE);
+								}
 							}
 							
 							btnEliminar.setEnabled(false);
